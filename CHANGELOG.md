@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 - 2026-11-04
+
+- Replaced `tessera::Tone::WARN` with `tessera::Tone::BUSY` in `GarmentIcon::draw()`.
+
 ## 0.1.2 - 2026-11-04
 
 - Fixed C++ types (`theme::Role` and `Font::BODY`) in `GarmentIcon` and `OutfitTile`.

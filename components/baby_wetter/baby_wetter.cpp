@@ -145,7 +145,7 @@ struct GarmentIcon {
 
     const auto acc = tessera::Tone::ACCENT;
     const auto good = tessera::Tone::GOOD;
-    const auto warn = tessera::Tone::WARN;
+    const auto warn = tessera::Tone::BUSY;
     const auto norm = tessera::Tone::NORMAL;
 
     switch (id) {
