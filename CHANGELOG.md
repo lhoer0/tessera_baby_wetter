@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.7 - 2026-11-04
+
+- Removed all external image fetching (`baby-wetter.de` URLs, `ui::picture`, `permissions.network`) — the plugin now renders clothing items exclusively using the local built-in LVGL vector illustrations (`GarmentIcon`), reducing RAM usage and eliminating cloud dependencies.
+
 ## 0.1.6 - 2026-11-04
 
 - Enabled direct interactive Situation dropdown on the grid tile (`OutfitTile`): tapping the situation pill on the top right opens the dropdown menu directly inside the tile without switching to the detail card.

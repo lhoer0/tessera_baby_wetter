@@ -14,53 +14,52 @@ namespace ui = tessera::ui;
 struct ItemDef {
   const char *key;
   const char *fallback_de;
-  const char *image_url;
 };
 
-// All 42 clothing item definitions and original image URLs from baby-wetter.de
+// All 42 clothing item definitions
 static constexpr ItemDef kCatalog[] = {
-  {"item_0", "Windel", "https://baby-wetter.de/wp-content/uploads/2024/11/windeln.png"},
-  {"item_1", "Langarmbody", "https://baby-wetter.de/wp-content/uploads/2022/10/langarmbody.png"},
-  {"item_2", "Socken", "https://baby-wetter.de/wp-content/uploads/2022/10/duennesocken.png"},
-  {"item_3", "Schlafanzug", "https://baby-wetter.de/wp-content/uploads/2023/01/Schlafanzug.png"},
-  {"item_4", "Schlafsack 3-3,5 TOG", "https://baby-wetter.de/wp-content/uploads/2023/01/schlafsack35TOG.png"},
-  {"item_5", "Schlafsack 2,5 TOG", "https://baby-wetter.de/wp-content/uploads/2023/01/schlafsack25TOG.png"},
-  {"item_6", "Schlafsack 1,0 TOG", "https://baby-wetter.de/wp-content/uploads/2023/01/schlafsack1TOG.png"},
-  {"item_7", "Kurzarmbody", "https://baby-wetter.de/wp-content/uploads/2022/10/kurzarmbody.png"},
-  {"item_8", "Schlafsack 0,5 TOG", "https://baby-wetter.de/wp-content/uploads/2023/01/schlafsack05TOG.png"},
-  {"item_9", "Hose", "https://baby-wetter.de/wp-content/uploads/2022/10/Hose.png"},
-  {"item_10", "Strickjacke", "https://baby-wetter.de/wp-content/uploads/2022/10/Strickjacke.png"},
-  {"item_11", "dicke Socken", "https://baby-wetter.de/wp-content/uploads/2022/10/duennesocken.png"},
-  {"item_12", "dünne Decke", "https://baby-wetter.de/wp-content/uploads/2022/10/duennedecke.png"},
-  {"item_13", "Pullover", "https://baby-wetter.de/wp-content/uploads/2022/10/Pullover.png"},
-  {"item_14", "dünner Pullover", "https://baby-wetter.de/wp-content/uploads/2022/10/duennerpullover.png"},
-  {"item_15", "dünne Socken", "https://baby-wetter.de/wp-content/uploads/2022/10/duennesocken.png"},
-  {"item_16", "Langarmshirt", "https://baby-wetter.de/wp-content/uploads/2022/10/langarmshirt.png"},
-  {"item_17", "Shirt", "https://baby-wetter.de/wp-content/uploads/2022/10/kurzarmshirt.png"},
-  {"item_18", "Barfuß", "https://baby-wetter.de/wp-content/uploads/2024/07/barfuss.png"},
-  {"item_19", "dünne Hose", "https://baby-wetter.de/wp-content/uploads/2022/10/duennehose.png"},
-  {"item_20", "Strumpfhose", "https://baby-wetter.de/wp-content/uploads/2022/10/Strumpfhose.png"},
-  {"item_21", "Wollwalk", "https://baby-wetter.de/wp-content/uploads/2022/10/Wollwalk.png"},
-  {"item_22", "Handschuhe", "https://baby-wetter.de/wp-content/uploads/2022/10/handschuhe.png"},
-  {"item_23", "Wintermütze", "https://baby-wetter.de/wp-content/uploads/2022/10/Wintermuetze.png"},
-  {"item_24", "Füßlinge", "https://baby-wetter.de/wp-content/uploads/2022/10/Schuhe.png"},
-  {"item_25", "Jacke", "https://baby-wetter.de/wp-content/uploads/2022/10/Jacke.png"},
-  {"item_26", "Lammfell", "https://baby-wetter.de/wp-content/uploads/2022/10/Lammfell.png"},
-  {"item_27", "Leggings", "https://baby-wetter.de/wp-content/uploads/2022/10/duennehose.png"},
-  {"item_28", "Tragejacke/-cover", "https://baby-wetter.de/wp-content/uploads/2022/10/tragecover.png"},
-  {"item_29", "Halstuch", "https://baby-wetter.de/wp-content/uploads/2024/11/Halstuch.png"},
-  {"item_30", "dicke Strumpfhose", "https://baby-wetter.de/wp-content/uploads/2022/10/Strumpfhose.png"},
-  {"item_31", "dünne Handschuhe", "https://baby-wetter.de/wp-content/uploads/2022/10/handschuhe.png"},
-  {"item_32", "dicke Hose", "https://baby-wetter.de/wp-content/uploads/2022/10/Hose.png"},
-  {"item_33", "Hose", "https://baby-wetter.de/wp-content/uploads/2022/10/duennehose.png"},
-  {"item_34", "Pullover", "https://baby-wetter.de/wp-content/uploads/2022/10/duennerpullover.png"},
-  {"item_35", "Mütze", "https://baby-wetter.de/wp-content/uploads/2022/10/Wintermuetze.png"},
-  {"item_36", "dünne Mütze", "https://baby-wetter.de/wp-content/uploads/2022/10/duennemuetze.png"},
-  {"item_37", "Sonnenhut", "https://baby-wetter.de/wp-content/uploads/2022/10/Sonnenhut.png"},
-  {"item_38", "Regenschutz", "https://baby-wetter.de/wp-content/uploads/2022/10/RegenSchutz.png"},
-  {"item_39", "Fußsack Auto", "https://baby-wetter.de/wp-content/uploads/2024/04/autofusssack.png"},
-  {"item_40", "Einschlagdecke", "https://baby-wetter.de/wp-content/uploads/2024/04/autoeinschlagdecke.png"},
-  {"item_41", "dünnes Häubchen", "https://baby-wetter.de/wp-content/uploads/2022/10/duennemuetze.png"},
+  {"item_0", "Windel"},
+  {"item_1", "Langarmbody"},
+  {"item_2", "Socken"},
+  {"item_3", "Schlafanzug"},
+  {"item_4", "Schlafsack 3-3,5 TOG"},
+  {"item_5", "Schlafsack 2,5 TOG"},
+  {"item_6", "Schlafsack 1,0 TOG"},
+  {"item_7", "Kurzarmbody"},
+  {"item_8", "Schlafsack 0,5 TOG"},
+  {"item_9", "Hose"},
+  {"item_10", "Strickjacke"},
+  {"item_11", "dicke Socken"},
+  {"item_12", "dünne Decke"},
+  {"item_13", "Pullover"},
+  {"item_14", "dünner Pullover"},
+  {"item_15", "dünne Socken"},
+  {"item_16", "Langarmshirt"},
+  {"item_17", "Shirt"},
+  {"item_18", "Barfuß"},
+  {"item_19", "dünne Hose"},
+  {"item_20", "Strumpfhose"},
+  {"item_21", "Wollwalk"},
+  {"item_22", "Handschuhe"},
+  {"item_23", "Wintermütze"},
+  {"item_24", "Füßlinge"},
+  {"item_25", "Jacke"},
+  {"item_26", "Lammfell"},
+  {"item_27", "Leggings"},
+  {"item_28", "Tragejacke/-cover"},
+  {"item_29", "Halstuch"},
+  {"item_30", "dicke Strumpfhose"},
+  {"item_31", "dünne Handschuhe"},
+  {"item_32", "dicke Hose"},
+  {"item_33", "Hose"},
+  {"item_34", "Pullover"},
+  {"item_35", "Mütze"},
+  {"item_36", "dünne Mütze"},
+  {"item_37", "Sonnenhut"},
+  {"item_38", "Regenschutz"},
+  {"item_39", "Fußsack Auto"},
+  {"item_40", "Einschlagdecke"},
+  {"item_41", "dünnes Häubchen"},
 };
 static constexpr size_t kCatalogCount = sizeof(kCatalog) / sizeof(kCatalog[0]);
 
@@ -70,17 +69,12 @@ static const char *item_label(const tessera::Plugin *plugin, uint8_t id) {
   return (translated && translated[0]) ? translated : kCatalog[id].fallback_de;
 }
 
-static const char *item_image(uint8_t id) {
-  if (id >= kCatalogCount) return "";
-  return kCatalog[id].image_url;
-}
-
 static void set_items(OutfitResult &out, const uint8_t *items, size_t count) {
   out.count = static_cast<uint8_t>(std::min(count, sizeof(out.items)));
   for (uint8_t i = 0; i < out.count; ++i) out.items[i] = items[i];
 }
 
-// ---- GarmentIcon: Clean LVGL vector clothing illustrations (shown immediately & when remote images are unavailable) ----
+// ---- GarmentIcon: Local LVGL vector clothing illustrations ----
 
 struct GarmentIcon {
   lv_obj_t *box = nullptr;
@@ -1039,16 +1033,9 @@ class OutfitCard : public tessera::Card {
     grid_top_ = header_h_ + pad_;
     pager_h_ = ui::mm(7);
 
-    has_pics_ = ui::pictures();
     for (int i = 0; i < kMaxCardSlots; ++i) {
       slot_bg_[i] = ui::block(parent_, theme::CARD);
       slot_icon_[i].build(parent_, 0, 0, ui::px(32));
-      pic_shown_[i] = false;
-
-      if (has_pics_) {
-        slot_pic_[i] = ui::picture(parent_, tessera::Placeholder::NONE);
-      }
-
       slot_cap_[i] = ui::text(parent_, Font::BODY, theme::INK);
       lv_obj_set_style_text_align(slot_cap_[i], LV_TEXT_ALIGN_CENTER, 0);
     }
@@ -1102,20 +1089,6 @@ class OutfitCard : public tessera::Card {
   void on_tick(uint32_t epoch) override { render(epoch); }
 
   void on_theme() override { render(tessera::epoch()); }
-
-  void on_picture(lv_obj_t *place, tessera::PictureState state) override {
-    for (int i = 0; i < kMaxCardSlots; ++i) {
-      if (slot_pic_[i] == place) {
-        pic_shown_[i] = (state == tessera::PictureState::SHOWN);
-        if (pic_shown_[i]) {
-          slot_icon_[i].hide();
-        } else if (slot_item_[i] < kCatalogCount) {
-          slot_icon_[i].draw(slot_item_[i]);
-        }
-        break;
-      }
-    }
-  }
 
   bool on_back() override {
     if (dropdown_open_) {
@@ -1192,22 +1165,13 @@ class OutfitCard : public tessera::Card {
 
       slot_icon_[i].set_bounds(cx + (cell_w - pic_side) / 2, cy + ui::px(2), pic_side);
 
-      if (has_pics_ && slot_pic_[i]) {
-        lv_obj_set_size(slot_pic_[i], pic_side, pic_side);
-        lv_obj_set_pos(slot_pic_[i], cx + (cell_w - pic_side) / 2, cy + ui::px(2));
-      }
-
       lv_obj_set_size(slot_cap_[i], cell_w - ui::px(4), cap_h);
       lv_obj_set_pos(slot_cap_[i], cx + ui::px(2), cy + cell_h - cap_h - ui::px(2));
     }
     for (int i = page_size_; i < kMaxCardSlots; ++i) {
-      slot_item_[i] = 255;
       lv_obj_add_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
       lv_obj_add_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
       slot_icon_[i].hide();
-      if (has_pics_ && slot_pic_[i]) {
-        lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
-      }
     }
   }
 
@@ -1264,44 +1228,20 @@ class OutfitCard : public tessera::Card {
     const int start = offset + page_ * page_size_;
     for (int i = 0; i < page_size_; ++i) {
       const int item_idx = start + i;
-      if (item_idx < res.count && !dropdown_open_) {
+      if (item_idx < res.count) {
         const uint8_t id = res.items[item_idx];
-        if (slot_item_[i] != id) {
-          slot_item_[i] = id;
-          pic_shown_[i] = false;
-        }
         lv_obj_clear_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
         ui::set_text(slot_cap_[i], item_label(plugin_, id));
-        if (!pic_shown_[i]) {
+        if (dropdown_open_) {
+          slot_icon_[i].hide();
+        } else {
           slot_icon_[i].draw(id);
         }
-        if (has_pics_ && slot_pic_[i]) {
-          lv_obj_clear_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
-          ui::set_picture(slot_pic_[i], item_image(id), tessera::Fit::CONTAIN);
-        }
       } else {
-        slot_item_[i] = 255;
-        pic_shown_[i] = false;
-        if (dropdown_open_ && item_idx < res.count) {
-          const uint8_t id = res.items[item_idx];
-          lv_obj_clear_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
-          lv_obj_clear_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
-          ui::set_text(slot_cap_[i], item_label(plugin_, id));
-          slot_icon_[i].hide();
-          if (has_pics_ && slot_pic_[i]) {
-            ui::set_picture(slot_pic_[i], "", tessera::Fit::CONTAIN);
-            lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
-          }
-        } else {
-          lv_obj_add_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
-          lv_obj_add_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
-          slot_icon_[i].hide();
-          if (has_pics_ && slot_pic_[i]) {
-            ui::set_picture(slot_pic_[i], "", tessera::Fit::CONTAIN);
-            lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
-          }
-        }
+        lv_obj_add_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
+        slot_icon_[i].hide();
       }
     }
 
@@ -1329,11 +1269,8 @@ class OutfitCard : public tessera::Card {
   lv_obj_t *drop_item_bg_[6]{};
   lv_obj_t *drop_item_lbl_[6]{};
   lv_obj_t *slot_bg_[kMaxCardSlots]{};
-  lv_obj_t *slot_pic_[kMaxCardSlots]{};
   lv_obj_t *slot_cap_[kMaxCardSlots]{};
   GarmentIcon slot_icon_[kMaxCardSlots]{};
-  uint8_t slot_item_[kMaxCardSlots]{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255};
-  bool pic_shown_[kMaxCardSlots]{};
   lv_obj_t *prev_btn_{}, *prev_lbl_{}, *next_btn_{}, *next_lbl_{}, *page_lbl_{};
 
   int width_ = 0, height_ = 0, pad_ = 0, grid_top_ = 0;
@@ -1342,7 +1279,6 @@ class OutfitCard : public tessera::Card {
   int cur_cols_ = 0, cur_rows_ = 0, page_size_ = 8;
   bool cur_pager_ = false;
   int page_ = 0, visible_items_ = 0;
-  bool has_pics_ = false;
   bool dropdown_open_ = false;
 };
 
@@ -1403,7 +1339,6 @@ class OutfitTile : public tessera::Tile {
     content_h_ = std::max(1, height_ - content_top_);
 
     show_grid_ = (rows_ >= 2 || cols_ >= 2);
-    has_pics_ = ui::pictures() && show_grid_;
     if (show_grid_) {
       if (width_ >= ui::px(large ? 300 : 210)) {
         base_cols_ = 4;
@@ -1418,12 +1353,6 @@ class OutfitTile : public tessera::Tile {
       for (int i = 0; i < max_slots_; ++i) {
         slot_bg_[i] = ui::block(c.parent, theme::TRACK);
         slot_icon_[i].build(c.parent, 0, 0, ui::px(28));
-        pic_shown_[i] = false;
-
-        if (has_pics_) {
-          slot_pic_[i] = ui::picture(c.parent, tessera::Placeholder::NONE);
-        }
-
         slot_cap_[i] = ui::text(c.parent, Font::BODY, theme::INK);
         lv_obj_set_style_text_align(slot_cap_[i], LV_TEXT_ALIGN_CENTER, 0);
       }
@@ -1474,20 +1403,6 @@ class OutfitTile : public tessera::Tile {
   void on_tick(uint32_t epoch) override { render(epoch); }
 
   void on_theme() override { render(tessera::epoch()); }
-
-  void on_picture(lv_obj_t *place, tessera::PictureState state) override {
-    for (int i = 0; i < max_slots_; ++i) {
-      if (slot_pic_[i] == place) {
-        pic_shown_[i] = (state == tessera::PictureState::SHOWN);
-        if (pic_shown_[i] && !tile_dropdown_open_) {
-          slot_icon_[i].hide();
-        } else if (!tile_dropdown_open_ && slot_item_[i] < kCatalogCount) {
-          slot_icon_[i].draw(slot_item_[i]);
-        }
-        break;
-      }
-    }
-  }
 
   void on_tap() override {
     const tessera::Point pt = tessera::tap_point();
@@ -1550,22 +1465,13 @@ class OutfitTile : public tessera::Tile {
 
       slot_icon_[i].set_bounds(cx + (cell_w - pic_side) / 2, cy + ui::px(2), pic_side);
 
-      if (has_pics_ && slot_pic_[i]) {
-        lv_obj_set_size(slot_pic_[i], pic_side, pic_side);
-        lv_obj_set_pos(slot_pic_[i], cx + (cell_w - pic_side) / 2, cy + ui::px(2));
-      }
-
       lv_obj_set_size(slot_cap_[i], cell_w - ui::px(2), cap_h);
       lv_obj_set_pos(slot_cap_[i], cx + ui::px(1), cy + cell_h - cap_h - ui::px(2));
     }
     for (int i = slot_count_; i < max_slots_; ++i) {
-      slot_item_[i] = 255;
       lv_obj_add_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
       lv_obj_add_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
       slot_icon_[i].hide();
-      if (has_pics_ && slot_pic_[i]) {
-        lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
-      }
     }
   }
 
@@ -1627,25 +1533,12 @@ class OutfitTile : public tessera::Tile {
         const int idx = offset + i;
         if (idx < res.count) {
           const uint8_t id = res.items[idx];
-          if (slot_item_[i] != id) {
-            slot_item_[i] = id;
-            pic_shown_[i] = false;
-          }
           lv_obj_clear_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
           lv_obj_clear_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
           if (tile_dropdown_open_) {
             slot_icon_[i].hide();
-            if (has_pics_ && slot_pic_[i]) {
-              lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
-            }
           } else {
-            if (!pic_shown_[i]) {
-              slot_icon_[i].draw(id);
-            }
-            if (has_pics_ && slot_pic_[i]) {
-              lv_obj_clear_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
-              ui::set_picture(slot_pic_[i], item_image(id), tessera::Fit::CONTAIN);
-            }
+            slot_icon_[i].draw(id);
           }
           if (i == slot_count_ - 1 && idx + 1 < res.count) {
             char more[48];
@@ -1655,15 +1548,9 @@ class OutfitTile : public tessera::Tile {
             ui::set_text(slot_cap_[i], item_label(plugin_, id));
           }
         } else {
-          slot_item_[i] = 255;
-          pic_shown_[i] = false;
           lv_obj_add_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
           lv_obj_add_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
           slot_icon_[i].hide();
-          if (has_pics_ && slot_pic_[i]) {
-            ui::set_picture(slot_pic_[i], "", tessera::Fit::CONTAIN);
-            lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
-          }
         }
       }
     } else if (summary_lbl_) {
@@ -1686,11 +1573,8 @@ class OutfitTile : public tessera::Tile {
   lv_obj_t *drop_item_bg_[6]{};
   lv_obj_t *drop_item_lbl_[6]{};
   lv_obj_t *slot_bg_[kMaxTileSlots]{};
-  lv_obj_t *slot_pic_[kMaxTileSlots]{};
   lv_obj_t *slot_cap_[kMaxTileSlots]{};
   GarmentIcon slot_icon_[kMaxTileSlots]{};
-  uint8_t slot_item_[kMaxTileSlots]{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255};
-  bool pic_shown_[kMaxTileSlots]{};
 
   int width_ = 0, height_ = 0, cols_ = 1, rows_ = 1, tile_index_ = -1;
   int pad_ = 0, header_h_ = 0, pill_x_ = 0, pill_w_ = 0, content_top_ = 0, content_h_ = 0;
@@ -1698,7 +1582,6 @@ class OutfitTile : public tessera::Tile {
   int base_cols_ = 2, base_rows_ = 1, max_slots_ = 0;
   int grid_cols_ = 0, grid_rows_ = 0, slot_count_ = 0;
   bool show_grid_ = false;
-  bool has_pics_ = false;
   bool fixed_sit_ = false;
   bool tile_dropdown_open_ = false;
   Situation tile_sit_ = Situation::ALLGEMEIN;

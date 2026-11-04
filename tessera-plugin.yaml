@@ -1,7 +1,7 @@
 # Baby Wetter (baby-wetter.de): clothing recommendations for babies based on outdoor temperature (from a weather entity
 # or temperature sensor), indoor temperature sensor, age (calculated from birthdate), and situation.
 id: baby_wetter
-version: 0.1.6
+version: 0.1.7
 api: "0.17"
 icon: baby-carriage
 maintainer: lhoer
@@ -13,11 +13,6 @@ requires:
 boards: any
 flash_kb: 16
 
-permissions:
-  network: [baby-wetter.de]
-attributes: [cloud]
-privacy: https://baby-wetter.de/datenschutzerklaerung/
-
 settings:
   - { key: baby_wetter_situation, label: setting_situation, hint: setting_situation_hint }
 
@@ -27,7 +22,6 @@ tiles:
     icon: baby-carriage
     sizes: { min: 1x1, max: 4x4, full: true }
     memory: 2800
-    pictures: 8
     example: tile_example
     options:
       - id: temp_sensor
@@ -67,4 +61,4 @@ tiles:
         hint: opt_rain_sensor_hint
 
 cards:
-  - { id: details, name: card_name, wide: true, pictures: 8 }
+  - { id: details, name: card_name, wide: true }

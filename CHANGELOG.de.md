@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.7 - 2026-11-04
+
+- Externes Nachladen von Bildern über das Netzwerk (`baby-wetter.de`, `ui::picture`, `permissions.network`) vollständig entfernt – das Plugin arbeitet jetzt zu 100 % lokal mit den integrierten LVGL-Vektor-Kleidungsgrafiken (`GarmentIcon`) und verbraucht dadurch weniger RAM.
+
 ## 0.1.6 - 2026-11-04
 
 - Situations-Dropdown direkt im Kachel-Layout (`OutfitTile`) bedienbar gemacht: Ein Tippen auf den Situations-Button oben rechts klappt das Auswahlmenü direkt auf der Kachel auf, ohne zuerst die Detailansicht zu öffnen.
