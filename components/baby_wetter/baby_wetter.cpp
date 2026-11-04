@@ -723,7 +723,7 @@ class OutfitCard : public tessera::Card {
     lv_obj_set_pos(info_label_, 0, (header_h_ - ui::line_height(large ? Font::TITLE : Font::BODY_LARGE)) / 2);
 
     // Interactive Situation Dropdown Button on the top right
-    drop_btn_ = ui::block(parent_, theme::SURFACE);
+    drop_btn_ = ui::block(parent_, theme::BUTTON);
     lv_obj_set_size(drop_btn_, drop_w_, header_h_);
     lv_obj_set_pos(drop_btn_, drop_x_, drop_y_);
 
@@ -754,7 +754,7 @@ class OutfitCard : public tessera::Card {
       const int cx = col * (cell_w + pad);
       const int cy = grid_top + row * (cell_h + pad);
 
-      slot_bg_[i] = ui::block(parent_, theme::SURFACE);
+      slot_bg_[i] = ui::block(parent_, theme::CARD);
       lv_obj_set_size(slot_bg_[i], cell_w, cell_h);
       lv_obj_set_pos(slot_bg_[i], cx, cy);
 
@@ -773,7 +773,7 @@ class OutfitCard : public tessera::Card {
     // Pager bar at the bottom when more than 8 items exist
     pager_y_ = height_ - pager_h;
     pager_h_ = pager_h;
-    prev_btn_ = ui::block(parent_, theme::SURFACE);
+    prev_btn_ = ui::block(parent_, theme::BUTTON);
     lv_obj_set_size(prev_btn_, ui::mm(10), pager_h_);
     lv_obj_set_pos(prev_btn_, 0, pager_y_);
     prev_lbl_ = ui::label(prev_btn_, Font::BODY_LARGE, theme::INK);
@@ -782,7 +782,7 @@ class OutfitCard : public tessera::Card {
     lv_obj_set_pos(prev_lbl_, 0, (pager_h_ - ui::line_height(Font::BODY_LARGE)) / 2);
     ui::set_text(prev_lbl_, "<");
 
-    next_btn_ = ui::block(parent_, theme::SURFACE);
+    next_btn_ = ui::block(parent_, theme::BUTTON);
     lv_obj_set_size(next_btn_, ui::mm(10), pager_h_);
     lv_obj_set_pos(next_btn_, width_ - ui::mm(10), pager_y_);
     next_lbl_ = ui::label(next_btn_, Font::BODY_LARGE, theme::INK);
@@ -799,7 +799,7 @@ class OutfitCard : public tessera::Card {
     // Dropdown overlay menu (6 situations), created last so it sits on top of the grid
     drop_row_h_ = std::min(ui::mm(7), (height_ - header_h_ - ui::px(4)) / 6);
     const int menu_h = drop_row_h_ * 6 + ui::px(4);
-    drop_menu_ = ui::block(parent_, theme::SURFACE);
+    drop_menu_ = ui::block(parent_, theme::RAISED);
     lv_obj_set_size(drop_menu_, drop_w_, menu_h);
     lv_obj_set_pos(drop_menu_, drop_x_, header_h_ + ui::px(2));
 
@@ -897,7 +897,8 @@ class OutfitCard : public tessera::Card {
       lv_obj_clear_flag(drop_menu_, LV_OBJ_FLAG_HIDDEN);
       for (int i = 0; i < 6; ++i) {
         const bool active = (static_cast<int>(res.situation) == i);
-        ui::set_fill(drop_item_bg_[i], active ? theme::Tone::GOOD : theme::Tone::NORMAL, theme::TRACK);
+        ui::set_fill(drop_item_bg_[i], active ? tessera::Tone::ACCENT : tessera::Tone::NORMAL, theme::TRACK);
+        ui::set_color(drop_item_lbl_[i], active ? theme::ON_ACCENT : theme::INK);
       }
     } else {
       lv_obj_add_flag(drop_menu_, LV_OBJ_FLAG_HIDDEN);
