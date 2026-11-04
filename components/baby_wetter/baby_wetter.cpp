@@ -98,7 +98,7 @@ struct GarmentIcon {
       parts[i] = ui::block(box, theme::ACCENT);
       lv_obj_add_flag(parts[i], LV_OBJ_FLAG_HIDDEN);
     }
-    badge = ui::label(box, Font::SMALL, theme::ON_ACCENT);
+    badge = ui::label(box, Font::BODY, theme::ON_ACCENT);
     lv_obj_set_style_text_align(badge, LV_TEXT_ALIGN_CENTER, 0);
     lv_obj_add_flag(badge, LV_OBJ_FLAG_HIDDEN);
   }
@@ -107,7 +107,7 @@ struct GarmentIcon {
     if (box) lv_obj_add_flag(box, LV_OBJ_FLAG_HIDDEN);
   }
 
-  void set_part(int idx, int px, int py, int pw, int ph, int radius, tessera::Tone tone, lv_color_t fallback_role) {
+  void set_part(int idx, int px, int py, int pw, int ph, int radius, tessera::Tone tone, theme::Role fallback_role) {
     if (idx < 0 || idx >= 6 || !parts[idx]) return;
     const int x = (px * size) / 100;
     const int y = (py * size) / 100;
@@ -127,7 +127,7 @@ struct GarmentIcon {
       lv_obj_add_flag(badge, LV_OBJ_FLAG_HIDDEN);
       return;
     }
-    const int lh = ui::line_height(Font::SMALL);
+    const int lh = ui::line_height(Font::BODY);
     lv_obj_set_size(badge, size, lh);
     lv_obj_set_pos(badge, 0, (py * size) / 100);
     ui::set_color(badge, theme::ON_ACCENT);
@@ -1335,7 +1335,7 @@ class OutfitTile : public tessera::Tile {
       slot_count_ = std::min(8, grid_cols_ * grid_rows_);
       const int cell_w = (width_ - pad * (grid_cols_ - 1)) / grid_cols_;
       const int cell_h = (content_h - pad * (grid_rows_ - 1)) / grid_rows_;
-      const int cap_h = ui::line_height(Font::SMALL);
+      const int cap_h = ui::line_height(Font::BODY);
       const int pic_side = std::max(1, std::min(cell_w - ui::px(4), cell_h - cap_h - ui::px(4)));
 
       for (int i = 0; i < slot_count_; ++i) {
@@ -1357,7 +1357,7 @@ class OutfitTile : public tessera::Tile {
           lv_obj_set_pos(slot_pic_[i], cx + (cell_w - pic_side) / 2, cy + ui::px(2));
         }
 
-        slot_cap_[i] = ui::label(c.parent, Font::SMALL, theme::INK);
+        slot_cap_[i] = ui::label(c.parent, Font::BODY, theme::INK);
         lv_obj_set_size(slot_cap_[i], cell_w - ui::px(2), cap_h);
         lv_obj_set_style_text_align(slot_cap_[i], LV_TEXT_ALIGN_CENTER, 0);
         lv_obj_set_pos(slot_cap_[i], cx + ui::px(1), cy + cell_h - cap_h - ui::px(2));
