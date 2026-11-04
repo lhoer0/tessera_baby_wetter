@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.5 - 2026-11-04
+
+- Dynamisches Kleidungs-Raster auf Kachel und Detailkarte: bleibt bis 8 sichtbare Teile im großen `4×2`-Raster, wechselt bei 9–10 Teilen automatisch auf `5×2` und bei 11–12 Teilen auf `4×3`.
+- Windel wird auch in der Detailansicht automatisch ausgeblendet, sobald mehr als 8 Kleidungsstücke empfohlen werden, damit keine unnötige zweite Seite entsteht.
+
 ## 0.1.4 - 2026-11-04
 
 - Vereinfachte Einrichtung: Doppelte Plugin-Eingaben entfernt – Sensoren und Geburtsdatum werden jetzt ausschließlich direkt an der Kachel auf der Seite hinterlegt.

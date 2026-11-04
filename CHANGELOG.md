@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.5 - 2026-11-04
+
+- Dynamic clothing grid layout on tile and detail card: uses large `4×2` for up to 8 visible items, automatically switches to `5×2` for 9–10 items, and `4×3` for 11–12 items.
+- Automatically hides `Windel` (diaper) on the detail card when more than 8 items are recommended so a second page is not needed for a single item.
+
 ## 0.1.4 - 2026-11-04
 
 - Simplified configuration: removed duplicate plugin-level inputs so sensors and birthdate are configured exclusively on the tile in the page editor.

@@ -103,6 +103,14 @@ struct GarmentIcon {
     lv_obj_add_flag(badge, LV_OBJ_FLAG_HIDDEN);
   }
 
+  void set_bounds(int x, int y, int side) {
+    size = side;
+    if (box) {
+      lv_obj_set_size(box, side, side);
+      lv_obj_set_pos(box, x, y);
+    }
+  }
+
   void hide() {
     if (box) lv_obj_add_flag(box, LV_OBJ_FLAG_HIDDEN);
   }
@@ -991,6 +999,8 @@ static bool parse_rain_entity(JsonObjectConst entity_obj) {
 
 class OutfitCard : public tessera::Card {
  public:
+  static constexpr int kMaxCardSlots = 12;
+
   explicit OutfitCard(BabyWetter *plugin) : plugin_(plugin) {}
 
   void open(const tessera::CardContext &c) override {
@@ -1000,7 +1010,7 @@ class OutfitCard : public tessera::Card {
     dropdown_open_ = plugin_->consume_open_dropdown();
 
     const bool large = ui::large();
-    const int pad = ui::px(large ? 10 : 6);
+    pad_ = ui::px(large ? 10 : 6);
     header_h_ = ui::mm(8);
     drop_w_ = std::min(width_ / 2, ui::px(large ? 200 : 140));
     drop_x_ = width_ - drop_w_;
@@ -1008,7 +1018,7 @@ class OutfitCard : public tessera::Card {
 
     // Header info (Temperature + Age) on the left
     info_label_ = ui::label(parent_, large ? Font::TITLE : Font::BODY_LARGE, theme::INK);
-    lv_obj_set_size(info_label_, std::max(1, drop_x_ - pad), ui::line_height(large ? Font::TITLE : Font::BODY_LARGE));
+    lv_obj_set_size(info_label_, std::max(1, drop_x_ - pad_), ui::line_height(large ? Font::TITLE : Font::BODY_LARGE));
     lv_obj_set_pos(info_label_, 0, (header_h_ - ui::line_height(large ? Font::TITLE : Font::BODY_LARGE)) / 2);
 
     // Interactive Situation Dropdown Button on the top right
@@ -1018,53 +1028,33 @@ class OutfitCard : public tessera::Card {
 
     drop_btn_label_ = ui::label(drop_btn_, Font::BODY_LARGE, theme::INK);
     const int chev_w = ui::px(large ? 24 : 18);
-    lv_obj_set_size(drop_btn_label_, std::max(1, drop_w_ - chev_w - pad * 2), ui::line_height(Font::BODY_LARGE));
-    lv_obj_set_pos(drop_btn_label_, pad, (header_h_ - ui::line_height(Font::BODY_LARGE)) / 2);
+    lv_obj_set_size(drop_btn_label_, std::max(1, drop_w_ - chev_w - pad_ * 2), ui::line_height(Font::BODY_LARGE));
+    lv_obj_set_pos(drop_btn_label_, pad_, (header_h_ - ui::line_height(Font::BODY_LARGE)) / 2);
 
     drop_btn_icon_ = ui::label(drop_btn_, Font::ICON_SMALL, theme::MUTED);
     lv_obj_set_size(drop_btn_icon_, chev_w, ui::line_height(Font::ICON_SMALL));
-    lv_obj_set_pos(drop_btn_icon_, drop_w_ - chev_w - pad / 2, (header_h_ - ui::line_height(Font::ICON_SMALL)) / 2);
+    lv_obj_set_pos(drop_btn_icon_, drop_w_ - chev_w - pad_ / 2, (header_h_ - ui::line_height(Font::ICON_SMALL)) / 2);
 
-    // 8 Clothing item slots (4 columns x 2 rows) below header
-    const int grid_top = header_h_ + pad;
-    const int pager_h = ui::mm(7);
-    const int grid_h = std::max(1, height_ - grid_top - pager_h);
-    const int cols = 4;
-    const int rows = 2;
-    const int cell_w = (width_ - pad * (cols - 1)) / cols;
-    const int cell_h = (grid_h - pad * (rows - 1)) / rows;
-    const int cap_h = ui::line_height(Font::BODY) * 2;
-    const int pic_side = std::max(1, std::min(cell_w - ui::px(4), cell_h - cap_h - ui::px(4)));
+    // Up to 12 Clothing item slots (dynamically arranged as 4x2, 5x2, or 4x3) below header
+    grid_top_ = header_h_ + pad_;
+    pager_h_ = ui::mm(7);
 
     has_pics_ = ui::pictures();
-    for (int i = 0; i < 8; ++i) {
-      const int col = i % cols;
-      const int row = i / cols;
-      const int cx = col * (cell_w + pad);
-      const int cy = grid_top + row * (cell_h + pad);
-
+    for (int i = 0; i < kMaxCardSlots; ++i) {
       slot_bg_[i] = ui::block(parent_, theme::CARD);
-      lv_obj_set_size(slot_bg_[i], cell_w, cell_h);
-      lv_obj_set_pos(slot_bg_[i], cx, cy);
-
-      slot_icon_[i].build(parent_, cx + (cell_w - pic_side) / 2, cy + ui::px(2), pic_side);
+      slot_icon_[i].build(parent_, 0, 0, ui::px(32));
       pic_shown_[i] = false;
 
       if (has_pics_) {
         slot_pic_[i] = ui::picture(parent_, tessera::Placeholder::NONE);
-        lv_obj_set_size(slot_pic_[i], pic_side, pic_side);
-        lv_obj_set_pos(slot_pic_[i], cx + (cell_w - pic_side) / 2, cy + ui::px(2));
       }
 
       slot_cap_[i] = ui::text(parent_, Font::BODY, theme::INK);
-      lv_obj_set_size(slot_cap_[i], cell_w - ui::px(4), cap_h);
       lv_obj_set_style_text_align(slot_cap_[i], LV_TEXT_ALIGN_CENTER, 0);
-      lv_obj_set_pos(slot_cap_[i], cx + ui::px(2), cy + cell_h - cap_h - ui::px(2));
     }
 
-    // Pager bar at the bottom when more than 8 items exist
-    pager_y_ = height_ - pager_h;
-    pager_h_ = pager_h;
+    // Pager bar at the bottom when more than 12 items exist
+    pager_y_ = height_ - pager_h_;
     prev_btn_ = ui::block(parent_, theme::BUTTON);
     lv_obj_set_size(prev_btn_, ui::mm(10), pager_h_);
     lv_obj_set_pos(prev_btn_, 0, pager_y_);
@@ -1114,7 +1104,7 @@ class OutfitCard : public tessera::Card {
   void on_theme() override { render(tessera::epoch()); }
 
   void on_picture(lv_obj_t *place, tessera::PictureState state) override {
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < kMaxCardSlots; ++i) {
       if (slot_pic_[i] == place) {
         pic_shown_[i] = (state == tessera::PictureState::SHOWN);
         if (pic_shown_[i]) {
@@ -1164,11 +1154,11 @@ class OutfitCard : public tessera::Card {
     }
 
     // Check pager buttons if visible
-    if (total_items_ > 8 && pt.y >= pager_y_) {
+    if (visible_items_ > page_size_ && pt.y >= pager_y_) {
       if (pt.x <= ui::mm(12) && page_ > 0) {
         --page_;
         render(tessera::epoch());
-      } else if (pt.x >= width_ - ui::mm(12) && (page_ + 1) * 8 < total_items_) {
+      } else if (pt.x >= width_ - ui::mm(12) && (page_ + 1) * page_size_ < visible_items_) {
         ++page_;
         render(tessera::epoch());
       }
@@ -1176,10 +1166,70 @@ class OutfitCard : public tessera::Card {
   }
 
  private:
+  void update_grid_layout(int cols, int rows, bool show_pager) {
+    if (cols == cur_cols_ && rows == cur_rows_ && show_pager == cur_pager_) return;
+    cur_cols_ = cols;
+    cur_rows_ = rows;
+    cur_pager_ = show_pager;
+    page_size_ = std::min(kMaxCardSlots, cols * rows);
+
+    const int bottom_reserve = show_pager ? pager_h_ : 0;
+    const int grid_h = std::max(1, height_ - grid_top_ - bottom_reserve);
+    const int cell_w = (width_ - pad_ * (cols - 1)) / cols;
+    const int cell_h = (grid_h - pad_ * (rows - 1)) / rows;
+    const int lh = ui::line_height(Font::BODY);
+    const int cap_h = (cell_h >= lh * 3 + ui::px(12)) ? (lh * 2) : lh;
+    const int pic_side = std::max(1, std::min(cell_w - ui::px(4), cell_h - cap_h - ui::px(4)));
+
+    for (int i = 0; i < page_size_; ++i) {
+      const int col = i % cols;
+      const int row = i / cols;
+      const int cx = col * (cell_w + pad_);
+      const int cy = grid_top_ + row * (cell_h + pad_);
+
+      lv_obj_set_size(slot_bg_[i], cell_w, cell_h);
+      lv_obj_set_pos(slot_bg_[i], cx, cy);
+
+      slot_icon_[i].set_bounds(cx + (cell_w - pic_side) / 2, cy + ui::px(2), pic_side);
+
+      if (has_pics_ && slot_pic_[i]) {
+        lv_obj_set_size(slot_pic_[i], pic_side, pic_side);
+        lv_obj_set_pos(slot_pic_[i], cx + (cell_w - pic_side) / 2, cy + ui::px(2));
+      }
+
+      lv_obj_set_size(slot_cap_[i], cell_w - ui::px(4), cap_h);
+      lv_obj_set_pos(slot_cap_[i], cx + ui::px(2), cy + cell_h - cap_h - ui::px(2));
+    }
+    for (int i = page_size_; i < kMaxCardSlots; ++i) {
+      slot_item_[i] = 255;
+      lv_obj_add_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
+      lv_obj_add_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
+      slot_icon_[i].hide();
+      if (has_pics_ && slot_pic_[i]) {
+        lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
+      }
+    }
+  }
+
   void render(uint32_t epoch) {
     const OutfitResult res = plugin_->evaluate_for_card(epoch);
-    total_items_ = res.count;
-    if (page_ * 8 >= total_items_) page_ = 0;
+    // Omit Windel (item 0) when more than 8 items exist so the 8 outer garments fit in the large 4x2 grid
+    const int offset = (res.count > 8 && res.items[0] == 0) ? 1 : 0;
+    visible_items_ = std::max(0, static_cast<int>(res.count) - offset);
+
+    int cols = 4;
+    int rows = 2;
+    if (visible_items_ > 10) {
+      cols = 4;
+      rows = 3;
+    } else if (visible_items_ > 8) {
+      cols = 5;
+      rows = 2;
+    }
+    const bool show_pager = (visible_items_ > cols * rows);
+    update_grid_layout(cols, rows, show_pager);
+
+    if (page_ * page_size_ >= visible_items_) page_ = 0;
 
     // Header text: Temperature + Age
     char hdr[96];
@@ -1210,9 +1260,9 @@ class OutfitCard : public tessera::Card {
       lv_obj_add_flag(drop_menu_, LV_OBJ_FLAG_HIDDEN);
     }
 
-    // Populate the 8 grid slots for the current page
-    const int start = page_ * 8;
-    for (int i = 0; i < 8; ++i) {
+    // Populate the grid slots for the current page
+    const int start = offset + page_ * page_size_;
+    for (int i = 0; i < page_size_; ++i) {
       const int item_idx = start + i;
       if (item_idx < res.count && !dropdown_open_) {
         const uint8_t id = res.items[item_idx];
@@ -1256,13 +1306,13 @@ class OutfitCard : public tessera::Card {
     }
 
     // Pager visibility
-    if (total_items_ > 8 && !dropdown_open_) {
+    if (show_pager && !dropdown_open_) {
       lv_obj_clear_flag(prev_btn_, LV_OBJ_FLAG_HIDDEN);
       lv_obj_clear_flag(next_btn_, LV_OBJ_FLAG_HIDDEN);
       lv_obj_clear_flag(page_lbl_, LV_OBJ_FLAG_HIDDEN);
       char pbuf[32];
-      const int pages = (total_items_ + 7) / 8;
-      std::snprintf(pbuf, sizeof(pbuf), "%d / %d (%d)", page_ + 1, pages, total_items_);
+      const int pages = (visible_items_ + page_size_ - 1) / page_size_;
+      std::snprintf(pbuf, sizeof(pbuf), "%d / %d (%d)", page_ + 1, pages, visible_items_);
       ui::set_text(page_lbl_, pbuf);
     } else {
       lv_obj_add_flag(prev_btn_, LV_OBJ_FLAG_HIDDEN);
@@ -1278,18 +1328,20 @@ class OutfitCard : public tessera::Card {
   lv_obj_t *drop_menu_{};
   lv_obj_t *drop_item_bg_[6]{};
   lv_obj_t *drop_item_lbl_[6]{};
-  lv_obj_t *slot_bg_[8]{};
-  lv_obj_t *slot_pic_[8]{};
-  lv_obj_t *slot_cap_[8]{};
-  GarmentIcon slot_icon_[8]{};
-  uint8_t slot_item_[8]{255, 255, 255, 255, 255, 255, 255, 255};
-  bool pic_shown_[8]{};
+  lv_obj_t *slot_bg_[kMaxCardSlots]{};
+  lv_obj_t *slot_pic_[kMaxCardSlots]{};
+  lv_obj_t *slot_cap_[kMaxCardSlots]{};
+  GarmentIcon slot_icon_[kMaxCardSlots]{};
+  uint8_t slot_item_[kMaxCardSlots]{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255};
+  bool pic_shown_[kMaxCardSlots]{};
   lv_obj_t *prev_btn_{}, *prev_lbl_{}, *next_btn_{}, *next_lbl_{}, *page_lbl_{};
 
-  int width_ = 0, height_ = 0;
+  int width_ = 0, height_ = 0, pad_ = 0, grid_top_ = 0;
   int header_h_ = 0, drop_x_ = 0, drop_y_ = 0, drop_w_ = 0, drop_row_h_ = 0;
   int pager_y_ = 0, pager_h_ = 0;
-  int page_ = 0, total_items_ = 0;
+  int cur_cols_ = 0, cur_rows_ = 0, page_size_ = 8;
+  bool cur_pager_ = false;
+  int page_ = 0, visible_items_ = 0;
   bool has_pics_ = false;
   bool dropdown_open_ = false;
 };
@@ -1298,6 +1350,8 @@ class OutfitCard : public tessera::Card {
 
 class OutfitTile : public tessera::Tile {
  public:
+  static constexpr int kMaxTileSlots = 12;
+
   explicit OutfitTile(BabyWetter *plugin) : plugin_(plugin) {}
 
   void create(const tessera::TileContext &c) override {
@@ -1315,7 +1369,7 @@ class OutfitTile : public tessera::Tile {
     plugin_->set_card_overrides(opt_out_temp_, opt_in_temp_, opt_rain_, tile_birthdate_.c_str(), tile_sit_, fixed_sit_);
 
     const bool large = ui::large();
-    const int pad = ui::px(large ? 6 : 4);
+    pad_ = ui::px(large ? 6 : 4);
     header_h_ = ui::line_height(Font::BODY_LARGE) + ui::px(large ? 8 : 4);
 
     // Situation Dropdown Pill on top right of tile
@@ -1327,8 +1381,8 @@ class OutfitTile : public tessera::Tile {
 
     pill_lbl_ = ui::label(pill_bg_, Font::BODY, theme::INK);
     const int chev_w = ui::px(large ? 18 : 14);
-    lv_obj_set_size(pill_lbl_, std::max(1, pill_w_ - chev_w - pad * 2), ui::line_height(Font::BODY));
-    lv_obj_set_pos(pill_lbl_, pad, (header_h_ - ui::line_height(Font::BODY)) / 2);
+    lv_obj_set_size(pill_lbl_, std::max(1, pill_w_ - chev_w - pad_ * 2), ui::line_height(Font::BODY));
+    lv_obj_set_pos(pill_lbl_, pad_, (header_h_ - ui::line_height(Font::BODY)) / 2);
 
     pill_icon_ = ui::label(pill_bg_, Font::ICON_SMALL, theme::MUTED);
     lv_obj_set_size(pill_icon_, chev_w, ui::line_height(Font::ICON_SMALL));
@@ -1341,61 +1395,42 @@ class OutfitTile : public tessera::Tile {
       lv_obj_set_size(meta_lbl_, width_, ui::line_height(Font::BODY));
       lv_obj_set_pos(meta_lbl_, 0, header_h_ + ui::px(2));
     } else {
-      lv_obj_set_size(meta_lbl_, std::max(1, pill_x_ - pad), ui::line_height(Font::BODY));
+      lv_obj_set_size(meta_lbl_, std::max(1, pill_x_ - pad_), ui::line_height(Font::BODY));
       lv_obj_set_pos(meta_lbl_, 0, (header_h_ - ui::line_height(Font::BODY)) / 2);
     }
 
-    const int content_top = (cols_ == 1) ? (header_h_ + ui::line_height(Font::BODY) + ui::px(4)) : (header_h_ + pad);
-    const int content_h = std::max(1, height_ - content_top);
+    content_top_ = (cols_ == 1) ? (header_h_ + ui::line_height(Font::BODY) + ui::px(4)) : (header_h_ + pad_);
+    content_h_ = std::max(1, height_ - content_top_);
 
     show_grid_ = (rows_ >= 2 || cols_ >= 2);
     has_pics_ = ui::pictures() && show_grid_;
     if (show_grid_) {
       if (width_ >= ui::px(large ? 300 : 210)) {
-        grid_cols_ = 4;
+        base_cols_ = 4;
       } else if (width_ >= ui::px(large ? 220 : 150)) {
-        grid_cols_ = 3;
+        base_cols_ = 3;
       } else {
-        grid_cols_ = 2;
+        base_cols_ = 2;
       }
-      grid_rows_ = (rows_ >= 2 && content_h >= ui::px(large ? 110 : 76)) ? 2 : 1;
-      slot_count_ = std::min(8, grid_cols_ * grid_rows_);
-      const int cell_w = (width_ - pad * (grid_cols_ - 1)) / grid_cols_;
-      const int cell_h = (content_h - pad * (grid_rows_ - 1)) / grid_rows_;
-      const int lh = ui::line_height(Font::BODY);
-      const bool two_line_cap = (cell_h >= lh * 3 + ui::px(14));
-      const int cap_h = two_line_cap ? (lh * 2) : lh;
-      const int pic_side = std::max(1, std::min(cell_w - ui::px(4), cell_h - cap_h - ui::px(4)));
+      base_rows_ = (rows_ >= 2 && content_h_ >= ui::px(large ? 110 : 76)) ? 2 : 1;
+      max_slots_ = (base_cols_ == 4 && base_rows_ == 2) ? kMaxTileSlots : std::min(8, base_cols_ * base_rows_);
 
-      for (int i = 0; i < slot_count_; ++i) {
-        const int col = i % grid_cols_;
-        const int row = i / grid_cols_;
-        const int cx = col * (cell_w + pad);
-        const int cy = content_top + row * (cell_h + pad);
-
+      for (int i = 0; i < max_slots_; ++i) {
         slot_bg_[i] = ui::block(c.parent, theme::TRACK);
-        lv_obj_set_size(slot_bg_[i], cell_w, cell_h);
-        lv_obj_set_pos(slot_bg_[i], cx, cy);
-
-        slot_icon_[i].build(c.parent, cx + (cell_w - pic_side) / 2, cy + ui::px(2), pic_side);
+        slot_icon_[i].build(c.parent, 0, 0, ui::px(28));
         pic_shown_[i] = false;
 
         if (has_pics_) {
           slot_pic_[i] = ui::picture(c.parent, tessera::Placeholder::NONE);
-          lv_obj_set_size(slot_pic_[i], pic_side, pic_side);
-          lv_obj_set_pos(slot_pic_[i], cx + (cell_w - pic_side) / 2, cy + ui::px(2));
         }
 
-        slot_cap_[i] = two_line_cap ? ui::text(c.parent, Font::BODY, theme::INK)
-                                    : ui::label(c.parent, Font::BODY, theme::INK);
-        lv_obj_set_size(slot_cap_[i], cell_w - ui::px(2), cap_h);
+        slot_cap_[i] = ui::text(c.parent, Font::BODY, theme::INK);
         lv_obj_set_style_text_align(slot_cap_[i], LV_TEXT_ALIGN_CENTER, 0);
-        lv_obj_set_pos(slot_cap_[i], cx + ui::px(1), cy + cell_h - cap_h - ui::px(2));
       }
     } else {
       summary_lbl_ = ui::text(c.parent, Font::BODY, theme::INK);
-      lv_obj_set_size(summary_lbl_, width_, content_h);
-      lv_obj_set_pos(summary_lbl_, 0, content_top);
+      lv_obj_set_size(summary_lbl_, width_, content_h_);
+      lv_obj_set_pos(summary_lbl_, 0, content_top_);
     }
 
     render(tessera::epoch());
@@ -1420,7 +1455,7 @@ class OutfitTile : public tessera::Tile {
   void on_theme() override { render(tessera::epoch()); }
 
   void on_picture(lv_obj_t *place, tessera::PictureState state) override {
-    for (int i = 0; i < slot_count_; ++i) {
+    for (int i = 0; i < max_slots_; ++i) {
       if (slot_pic_[i] == place) {
         pic_shown_[i] = (state == tessera::PictureState::SHOWN);
         if (pic_shown_[i]) {
@@ -1443,6 +1478,49 @@ class OutfitTile : public tessera::Tile {
   }
 
  private:
+  void update_tile_grid(int cols, int rows) {
+    if (cols == grid_cols_ && rows == grid_rows_) return;
+    grid_cols_ = cols;
+    grid_rows_ = rows;
+    slot_count_ = std::min(max_slots_, grid_cols_ * grid_rows_);
+
+    const int cell_w = (width_ - pad_ * (grid_cols_ - 1)) / grid_cols_;
+    const int cell_h = (content_h_ - pad_ * (grid_rows_ - 1)) / grid_rows_;
+    const int lh = ui::line_height(Font::BODY);
+    const bool two_line_cap = (cell_h >= lh * 3 + ui::px(14));
+    const int cap_h = two_line_cap ? (lh * 2) : lh;
+    const int pic_side = std::max(1, std::min(cell_w - ui::px(4), cell_h - cap_h - ui::px(4)));
+
+    for (int i = 0; i < slot_count_; ++i) {
+      const int col = i % grid_cols_;
+      const int row = i / grid_cols_;
+      const int cx = col * (cell_w + pad_);
+      const int cy = content_top_ + row * (cell_h + pad_);
+
+      lv_obj_set_size(slot_bg_[i], cell_w, cell_h);
+      lv_obj_set_pos(slot_bg_[i], cx, cy);
+
+      slot_icon_[i].set_bounds(cx + (cell_w - pic_side) / 2, cy + ui::px(2), pic_side);
+
+      if (has_pics_ && slot_pic_[i]) {
+        lv_obj_set_size(slot_pic_[i], pic_side, pic_side);
+        lv_obj_set_pos(slot_pic_[i], cx + (cell_w - pic_side) / 2, cy + ui::px(2));
+      }
+
+      lv_obj_set_size(slot_cap_[i], cell_w - ui::px(2), cap_h);
+      lv_obj_set_pos(slot_cap_[i], cx + ui::px(1), cy + cell_h - cap_h - ui::px(2));
+    }
+    for (int i = slot_count_; i < max_slots_; ++i) {
+      slot_item_[i] = 255;
+      lv_obj_add_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
+      lv_obj_add_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
+      slot_icon_[i].hide();
+      if (has_pics_ && slot_pic_[i]) {
+        lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
+      }
+    }
+  }
+
   void render(uint32_t epoch) {
     const Situation sit = fixed_sit_ ? tile_sit_ : plugin_->active_situation();
     const float out_t = opt_out_temp_;
@@ -1464,8 +1542,24 @@ class OutfitTile : public tessera::Tile {
     ui::set_text(meta_lbl_, meta);
 
     if (show_grid_) {
-      // Skip Windel (index 0) on compact tile grids when more items exist than fit, so outer clothes are visible first
-      const int offset = (res.count > slot_count_ && res.count > 1 && res.items[0] == 0) ? 1 : 0;
+      const int base_cap = base_cols_ * base_rows_;
+      // Skip Windel (index 0) when more items exist than fit in the standard grid, so outer clothes stay big
+      const int offset = (res.count > base_cap && res.count > 1 && res.items[0] == 0) ? 1 : 0;
+      const int visible_items = std::max(0, static_cast<int>(res.count) - offset);
+
+      int cols = base_cols_;
+      int rows = base_rows_;
+      if (base_cols_ == 4 && base_rows_ == 2) {
+        if (visible_items > 10 && content_h_ >= ui::px(ui::large() ? 180 : 126)) {
+          cols = 4;
+          rows = 3;
+        } else if (visible_items > 8) {
+          cols = 5;
+          rows = 2;
+        }
+      }
+      update_tile_grid(cols, rows);
+
       for (int i = 0; i < slot_count_; ++i) {
         const int idx = offset + i;
         if (idx < res.count) {
@@ -1518,16 +1612,17 @@ class OutfitTile : public tessera::Tile {
 
   BabyWetter *plugin_;
   lv_obj_t *pill_bg_{}, *pill_lbl_{}, *pill_icon_{}, *meta_lbl_{}, *summary_lbl_{};
-  lv_obj_t *slot_bg_[8]{};
-  lv_obj_t *slot_pic_[8]{};
-  lv_obj_t *slot_cap_[8]{};
-  GarmentIcon slot_icon_[8]{};
-  uint8_t slot_item_[8]{255, 255, 255, 255, 255, 255, 255, 255};
-  bool pic_shown_[8]{};
+  lv_obj_t *slot_bg_[kMaxTileSlots]{};
+  lv_obj_t *slot_pic_[kMaxTileSlots]{};
+  lv_obj_t *slot_cap_[kMaxTileSlots]{};
+  GarmentIcon slot_icon_[kMaxTileSlots]{};
+  uint8_t slot_item_[kMaxTileSlots]{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255};
+  bool pic_shown_[kMaxTileSlots]{};
 
   int width_ = 0, height_ = 0, cols_ = 1, rows_ = 1, tile_index_ = -1;
-  int header_h_ = 0, pill_x_ = 0, pill_w_ = 0;
-  int grid_cols_ = 2, grid_rows_ = 1, slot_count_ = 0;
+  int pad_ = 0, header_h_ = 0, pill_x_ = 0, pill_w_ = 0, content_top_ = 0, content_h_ = 0;
+  int base_cols_ = 2, base_rows_ = 1, max_slots_ = 0;
+  int grid_cols_ = 0, grid_rows_ = 0, slot_count_ = 0;
   bool show_grid_ = false;
   bool has_pics_ = false;
   bool fixed_sit_ = false;

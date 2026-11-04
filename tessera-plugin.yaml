@@ -1,7 +1,7 @@
 # Baby Wetter (baby-wetter.de): clothing recommendations for babies based on outdoor temperature (from a weather entity
 # or temperature sensor), indoor temperature sensor, age (calculated from birthdate), and situation.
 id: baby_wetter
-version: 0.1.4
+version: 0.1.5
 api: "0.17"
 icon: baby-carriage
 maintainer: lhoer
