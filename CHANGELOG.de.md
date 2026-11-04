@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6 - 2026-11-04
+
+- Situations-Dropdown direkt im Kachel-Layout (`OutfitTile`) bedienbar gemacht: Ein Tippen auf den Situations-Button oben rechts klappt das Auswahlmenü direkt auf der Kachel auf, ohne zuerst die Detailansicht zu öffnen.
+
 ## 0.1.5 - 2026-11-04
 
 - Dynamisches Kleidungs-Raster auf Kachel und Detailkarte: bleibt bis 8 sichtbare Teile im großen `4×2`-Raster, wechselt bei 9–10 Teilen automatisch auf `5×2` und bei 11–12 Teilen auf `4×3`.

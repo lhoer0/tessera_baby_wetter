@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6 - 2026-11-04
+
+- Enabled direct interactive Situation dropdown on the grid tile (`OutfitTile`): tapping the situation pill on the top right opens the dropdown menu directly inside the tile without switching to the detail card.
+
 ## 0.1.5 - 2026-11-04
 
 - Dynamic clothing grid layout on tile and detail card: uses large `4×2` for up to 8 visible items, automatically switches to `5×2` for 9–10 items, and `4×3` for 11–12 items.

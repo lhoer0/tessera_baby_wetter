@@ -1427,6 +1427,27 @@ class OutfitTile : public tessera::Tile {
         slot_cap_[i] = ui::text(c.parent, Font::BODY, theme::INK);
         lv_obj_set_style_text_align(slot_cap_[i], LV_TEXT_ALIGN_CENTER, 0);
       }
+
+      // Dropdown overlay menu directly on the tile (6 situations), created after grid so it sits on top
+      drop_row_h_ = std::max(ui::px(22), std::min(ui::mm(6), (height_ - header_h_ - ui::px(4)) / 6));
+      drop_menu_w_ = std::max(pill_w_, std::min(width_, ui::px(large ? 180 : 135)));
+      drop_menu_x_ = width_ - drop_menu_w_;
+      const int menu_h = drop_row_h_ * 6 + ui::px(4);
+      drop_menu_ = ui::block(c.parent, theme::RAISED);
+      lv_obj_set_size(drop_menu_, drop_menu_w_, menu_h);
+      lv_obj_set_pos(drop_menu_, drop_menu_x_, header_h_ + ui::px(2));
+      lv_obj_add_flag(drop_menu_, LV_OBJ_FLAG_HIDDEN);
+
+      for (int i = 0; i < 6; ++i) {
+        drop_item_bg_[i] = ui::block(drop_menu_, theme::TRACK);
+        lv_obj_set_size(drop_item_bg_[i], drop_menu_w_ - ui::px(4), drop_row_h_ - ui::px(2));
+        lv_obj_set_pos(drop_item_bg_[i], ui::px(2), ui::px(2) + i * drop_row_h_);
+
+        drop_item_lbl_[i] = ui::label(drop_item_bg_[i], Font::BODY, theme::INK);
+        lv_obj_set_size(drop_item_lbl_[i], drop_menu_w_ - ui::px(12), ui::line_height(Font::BODY));
+        lv_obj_set_pos(drop_item_lbl_[i], ui::px(6), (drop_row_h_ - ui::px(2) - ui::line_height(Font::BODY)) / 2);
+        ui::set_text(drop_item_lbl_[i], plugin_->situation_label(static_cast<Situation>(i)));
+      }
     } else {
       summary_lbl_ = ui::text(c.parent, Font::BODY, theme::INK);
       lv_obj_set_size(summary_lbl_, width_, content_h_);
@@ -1458,9 +1479,9 @@ class OutfitTile : public tessera::Tile {
     for (int i = 0; i < max_slots_; ++i) {
       if (slot_pic_[i] == place) {
         pic_shown_[i] = (state == tessera::PictureState::SHOWN);
-        if (pic_shown_[i]) {
+        if (pic_shown_[i] && !tile_dropdown_open_) {
           slot_icon_[i].hide();
-        } else if (slot_item_[i] < kCatalogCount) {
+        } else if (!tile_dropdown_open_ && slot_item_[i] < kCatalogCount) {
           slot_icon_[i].draw(slot_item_[i]);
         }
         break;
@@ -1470,9 +1491,36 @@ class OutfitTile : public tessera::Tile {
 
   void on_tap() override {
     const tessera::Point pt = tessera::tap_point();
-    const bool tapped_pill = (pt.x >= pill_x_ && pt.y >= 0 && pt.y <= header_h_ + ui::px(4));
+
+    // On grid tiles, tapping the Situation pill toggles the in-tile dropdown directly without opening the detail card
+    if (show_grid_ && drop_menu_) {
+      const bool tapped_pill = (pt.x >= pill_x_ - ui::px(8) && pt.y >= 0 && pt.y <= header_h_ + ui::px(8));
+      if (tapped_pill) {
+        tile_dropdown_open_ = !tile_dropdown_open_;
+        render(tessera::epoch());
+        return;
+      }
+
+      if (tile_dropdown_open_) {
+        const int menu_top = header_h_ + ui::px(2);
+        const int menu_bottom = menu_top + drop_row_h_ * 6 + ui::px(4);
+        if (pt.x >= drop_menu_x_ - ui::px(4) && pt.x <= drop_menu_x_ + drop_menu_w_ + ui::px(4) &&
+            pt.y >= menu_top && pt.y <= menu_bottom) {
+          int idx = (pt.y - menu_top - ui::px(2)) / std::max(1, drop_row_h_);
+          if (idx >= 0 && idx < 6) {
+            fixed_sit_ = false;
+            tile_sit_ = static_cast<Situation>(idx);
+            plugin_->set_situation_index(idx);
+          }
+        }
+        tile_dropdown_open_ = false;
+        render(tessera::epoch());
+        return;
+      }
+    }
+
     plugin_->set_card_overrides(opt_out_temp_, opt_in_temp_, opt_rain_, tile_birthdate_.c_str(), tile_sit_, fixed_sit_);
-    plugin_->request_open_dropdown(tapped_pill);
+    plugin_->request_open_dropdown(false);
     tessera::open_card(plugin_->plugin_id(), "details", "", tile_index_,
                        name_.empty() ? plugin_->text("title") : roomy::plain(name_));
   }
@@ -1530,6 +1578,21 @@ class OutfitTile : public tessera::Tile {
     const OutfitResult res = plugin_->evaluate(out_t, in_t, opt_rain_, bdate, sit, epoch);
 
     ui::set_text(pill_lbl_, plugin_->situation_label(res.situation));
+    if (pill_icon_) {
+      ui::set_text(pill_icon_, tile_dropdown_open_ ? "\U000F0143" : "\U000F0140");
+    }
+    if (drop_menu_) {
+      if (tile_dropdown_open_) {
+        lv_obj_clear_flag(drop_menu_, LV_OBJ_FLAG_HIDDEN);
+        for (int i = 0; i < 6; ++i) {
+          const bool active = (static_cast<int>(res.situation) == i);
+          ui::set_fill(drop_item_bg_[i], active ? tessera::Tone::ACCENT : tessera::Tone::NORMAL, theme::TRACK);
+          ui::set_color(drop_item_lbl_[i], active ? theme::ON_ACCENT : theme::INK);
+        }
+      } else {
+        lv_obj_add_flag(drop_menu_, LV_OBJ_FLAG_HIDDEN);
+      }
+    }
 
     char meta[64];
     const char *age_short = res.age.is_older_baby ? plugin_->text("age_baby") : plugin_->text("age_newborn");
@@ -1570,12 +1633,19 @@ class OutfitTile : public tessera::Tile {
           }
           lv_obj_clear_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
           lv_obj_clear_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
-          if (!pic_shown_[i]) {
-            slot_icon_[i].draw(id);
-          }
-          if (has_pics_ && slot_pic_[i]) {
-            lv_obj_clear_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
-            ui::set_picture(slot_pic_[i], item_image(id), tessera::Fit::CONTAIN);
+          if (tile_dropdown_open_) {
+            slot_icon_[i].hide();
+            if (has_pics_ && slot_pic_[i]) {
+              lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
+            }
+          } else {
+            if (!pic_shown_[i]) {
+              slot_icon_[i].draw(id);
+            }
+            if (has_pics_ && slot_pic_[i]) {
+              lv_obj_clear_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
+              ui::set_picture(slot_pic_[i], item_image(id), tessera::Fit::CONTAIN);
+            }
           }
           if (i == slot_count_ - 1 && idx + 1 < res.count) {
             char more[48];
@@ -1612,6 +1682,9 @@ class OutfitTile : public tessera::Tile {
 
   BabyWetter *plugin_;
   lv_obj_t *pill_bg_{}, *pill_lbl_{}, *pill_icon_{}, *meta_lbl_{}, *summary_lbl_{};
+  lv_obj_t *drop_menu_{};
+  lv_obj_t *drop_item_bg_[6]{};
+  lv_obj_t *drop_item_lbl_[6]{};
   lv_obj_t *slot_bg_[kMaxTileSlots]{};
   lv_obj_t *slot_pic_[kMaxTileSlots]{};
   lv_obj_t *slot_cap_[kMaxTileSlots]{};
@@ -1621,11 +1694,13 @@ class OutfitTile : public tessera::Tile {
 
   int width_ = 0, height_ = 0, cols_ = 1, rows_ = 1, tile_index_ = -1;
   int pad_ = 0, header_h_ = 0, pill_x_ = 0, pill_w_ = 0, content_top_ = 0, content_h_ = 0;
+  int drop_row_h_ = 0, drop_menu_x_ = 0, drop_menu_w_ = 0;
   int base_cols_ = 2, base_rows_ = 1, max_slots_ = 0;
   int grid_cols_ = 0, grid_rows_ = 0, slot_count_ = 0;
   bool show_grid_ = false;
   bool has_pics_ = false;
   bool fixed_sit_ = false;
+  bool tile_dropdown_open_ = false;
   Situation tile_sit_ = Situation::ALLGEMEIN;
   tessera::Text name_{};
   tessera::Text tile_birthdate_{};
