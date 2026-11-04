@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 - 2026-11-04
+
+- C++-Typen (`theme::Role` und `Font::BODY`) in `GarmentIcon` und `OutfitTile` korrigiert.
+
 ## 0.1.1 - 2026-11-04
 
 - Vollbild-Kachelgröße (`full: true`, 2x3 auf dem 4-Zoll Guition Display) freigeschaltet und das Kachel-Raster (4 Spalten x 2 Zeilen) für 2x2- und 2x3-Kacheln optimiert, sodass bis zu 8 Kleidungsstücke direkt auf der Kachel Platz finden.

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 - 2026-11-04
+
+- Fixed C++ types (`theme::Role` and `Font::BODY`) in `GarmentIcon` and `OutfitTile`.
+
 ## 0.1.1 - 2026-11-04
 
 - Enabled full-screen tile size (`full: true`, 2x3 on Guition 4-inch display) and improved the 2x2 / 2x3 tile grid layout to display up to 8 clothing items across 4 columns x 2 rows.
