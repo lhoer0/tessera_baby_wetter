@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 - 2026-11-04
+
+- Vollbild-Kachelgröße (`full: true`, 2x3 auf dem 4-Zoll Guition Display) freigeschaltet und das Kachel-Raster (4 Spalten x 2 Zeilen) für 2x2- und 2x3-Kacheln optimiert, sodass bis zu 8 Kleidungsstücke direkt auf der Kachel Platz finden.
+- Eingebaute LVGL-Vektor-Kleidungsgrafiken (`GarmentIcon`) für alle 42 Kleidungsstücke ergänzt, damit jedes Kleidungsstück sofort (und auch ohne erreichbaren Bild-Server) als farbiges Kleidungs-Icon dargestellt wird.
+
 ## 0.1.0 - 2026-11-04
 
 - Erste Version des `baby_wetter`-Plugins für Tessera (optimiert für das 4-Zoll Guition ESP32-S3 Display).

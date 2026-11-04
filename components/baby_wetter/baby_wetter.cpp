@@ -80,6 +80,269 @@ static void set_items(OutfitResult &out, const uint8_t *items, size_t count) {
   for (uint8_t i = 0; i < out.count; ++i) out.items[i] = items[i];
 }
 
+// ---- GarmentIcon: Clean LVGL vector clothing illustrations (shown immediately & when remote images are unavailable) ----
+
+struct GarmentIcon {
+  lv_obj_t *box = nullptr;
+  lv_obj_t *parts[6]{};
+  lv_obj_t *badge = nullptr;
+  int size = 0;
+
+  void build(lv_obj_t *parent, int x, int y, int side) {
+    size = side;
+    box = ui::block(parent, theme::CARD);
+    lv_obj_set_size(box, side, side);
+    lv_obj_set_pos(box, x, y);
+    lv_obj_set_style_bg_opa(box, LV_OPA_TRANSP, 0);
+    for (int i = 0; i < 6; ++i) {
+      parts[i] = ui::block(box, theme::ACCENT);
+      lv_obj_add_flag(parts[i], LV_OBJ_FLAG_HIDDEN);
+    }
+    badge = ui::label(box, Font::SMALL, theme::ON_ACCENT);
+    lv_obj_set_style_text_align(badge, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_add_flag(badge, LV_OBJ_FLAG_HIDDEN);
+  }
+
+  void hide() {
+    if (box) lv_obj_add_flag(box, LV_OBJ_FLAG_HIDDEN);
+  }
+
+  void set_part(int idx, int px, int py, int pw, int ph, int radius, tessera::Tone tone, lv_color_t fallback_role) {
+    if (idx < 0 || idx >= 6 || !parts[idx]) return;
+    const int x = (px * size) / 100;
+    const int y = (py * size) / 100;
+    const int w = std::max(2, (pw * size) / 100);
+    const int h = std::max(2, (ph * size) / 100);
+    const int r = (radius * size) / 100;
+    lv_obj_set_pos(parts[idx], x, y);
+    lv_obj_set_size(parts[idx], w, h);
+    lv_obj_set_style_radius(parts[idx], r, 0);
+    ui::set_fill(parts[idx], tone, fallback_role);
+    lv_obj_clear_flag(parts[idx], LV_OBJ_FLAG_HIDDEN);
+  }
+
+  void set_badge(const char *txt, int py) {
+    if (!badge) return;
+    if (!txt || !txt[0]) {
+      lv_obj_add_flag(badge, LV_OBJ_FLAG_HIDDEN);
+      return;
+    }
+    const int lh = ui::line_height(Font::SMALL);
+    lv_obj_set_size(badge, size, lh);
+    lv_obj_set_pos(badge, 0, (py * size) / 100);
+    ui::set_color(badge, theme::ON_ACCENT);
+    ui::set_text(badge, txt);
+    lv_obj_clear_flag(badge, LV_OBJ_FLAG_HIDDEN);
+  }
+
+  void draw(uint8_t id) {
+    if (!box) return;
+    lv_obj_clear_flag(box, LV_OBJ_FLAG_HIDDEN);
+    for (int i = 0; i < 6; ++i) {
+      if (parts[i]) lv_obj_add_flag(parts[i], LV_OBJ_FLAG_HIDDEN);
+    }
+    if (badge) lv_obj_add_flag(badge, LV_OBJ_FLAG_HIDDEN);
+
+    const auto acc = tessera::Tone::ACCENT;
+    const auto good = tessera::Tone::GOOD;
+    const auto warn = tessera::Tone::WARN;
+    const auto norm = tessera::Tone::NORMAL;
+
+    switch (id) {
+      case 0:  // Windel
+        set_part(0, 20, 26, 60, 16, 6, norm, theme::MUTED);
+        set_part(1, 24, 36, 52, 30, 12, norm, theme::MUTED);
+        set_part(2, 34, 52, 32, 22, 10, norm, theme::MUTED);
+        set_part(3, 22, 30, 14, 7, 3, acc, theme::ACCENT);
+        set_part(4, 64, 30, 14, 7, 3, acc, theme::ACCENT);
+        break;
+
+      case 1:  // Langarmbody
+        set_part(0, 10, 22, 24, 42, 6, acc, theme::ACCENT);
+        set_part(1, 66, 22, 24, 42, 6, acc, theme::ACCENT);
+        set_part(2, 28, 18, 44, 52, 8, acc, theme::ACCENT);
+        set_part(3, 35, 62, 30, 18, 9, acc, theme::ACCENT);
+        set_part(4, 38, 15, 24, 8, 4, norm, theme::CARD);
+        break;
+
+      case 7:  // Kurzarmbody
+        set_part(0, 14, 22, 20, 20, 5, acc, theme::ACCENT);
+        set_part(1, 66, 22, 20, 20, 5, acc, theme::ACCENT);
+        set_part(2, 28, 18, 44, 52, 8, acc, theme::ACCENT);
+        set_part(3, 35, 62, 30, 18, 9, acc, theme::ACCENT);
+        set_part(4, 38, 15, 24, 8, 4, norm, theme::CARD);
+        break;
+
+      case 3:   // Schlafanzug
+      case 21:  // Wollwalk
+      case 28:  // Tragejacke/-cover
+      {
+        const auto t = (id == 21) ? warn : (id == 28 ? good : acc);
+        set_part(0, 10, 20, 22, 38, 6, t, theme::ACCENT);
+        set_part(1, 68, 20, 22, 38, 6, t, theme::ACCENT);
+        set_part(2, 28, 16, 44, 42, 8, t, theme::ACCENT);
+        set_part(3, 28, 52, 19, 34, 6, t, theme::ACCENT);
+        set_part(4, 53, 52, 19, 34, 6, t, theme::ACCENT);
+        if (id == 21 || id == 28) {
+          set_part(5, 48, 20, 4, 36, 2, norm, theme::CARD);
+        }
+        break;
+      }
+
+      case 4:  // Schlafsack 3-3,5 TOG
+      case 5:  // Schlafsack 2,5 TOG
+      case 6:  // Schlafsack 1,0 TOG
+      case 8:  // Schlafsack 0,5 TOG
+      case 39: // Fußsack Auto
+      {
+        const auto t = (id == 4 || id == 5) ? warn : (id == 39 ? good : acc);
+        set_part(0, 28, 14, 14, 18, 5, t, theme::ACCENT);
+        set_part(1, 58, 14, 14, 18, 5, t, theme::ACCENT);
+        set_part(2, 24, 26, 52, 34, 10, t, theme::ACCENT);
+        set_part(3, 18, 44, 64, 42, 20, t, theme::ACCENT);
+        if (id == 4) set_badge("3.5", 52);
+        else if (id == 5) set_badge("2.5", 52);
+        else if (id == 6) set_badge("1.0", 52);
+        else if (id == 8) set_badge("0.5", 52);
+        break;
+      }
+
+      case 9:   // Hose
+      case 19:  // dünne Hose
+      case 27:  // Leggings
+      case 32:  // dicke Hose
+      case 33:  // Hose
+      {
+        const auto t = (id == 32 || id == 9) ? acc : good;
+        set_part(0, 24, 16, 52, 22, 6, t, theme::ACCENT);
+        set_part(1, 24, 32, 22, 52, 6, t, theme::ACCENT);
+        set_part(2, 54, 32, 22, 52, 6, t, theme::ACCENT);
+        set_part(3, 24, 16, 52, 8, 3, norm, theme::MUTED);
+        break;
+      }
+
+      case 20:  // Strumpfhose
+      case 30:  // dicke Strumpfhose
+      {
+        const auto t = (id == 30) ? warn : acc;
+        set_part(0, 24, 14, 52, 20, 6, t, theme::ACCENT);
+        set_part(1, 24, 30, 20, 48, 6, t, theme::ACCENT);
+        set_part(2, 56, 30, 20, 48, 6, t, theme::ACCENT);
+        set_part(3, 14, 70, 28, 14, 6, t, theme::ACCENT);
+        set_part(4, 58, 70, 28, 14, 6, t, theme::ACCENT);
+        break;
+      }
+
+      case 10:  // Strickjacke
+      case 25:  // Jacke
+      {
+        const auto t = (id == 25) ? warn : good;
+        set_part(0, 10, 22, 22, 46, 6, t, theme::ACCENT);
+        set_part(1, 68, 22, 22, 46, 6, t, theme::ACCENT);
+        set_part(2, 26, 18, 48, 56, 8, t, theme::ACCENT);
+        set_part(3, 47, 18, 6, 56, 2, norm, theme::CARD);
+        break;
+      }
+
+      case 13:  // Pullover
+      case 14:  // dünner Pullover
+      case 16:  // Langarmshirt
+      case 34:  // Pullover
+      {
+        const auto t = (id == 13 || id == 34) ? warn : acc;
+        set_part(0, 10, 22, 22, 44, 6, t, theme::ACCENT);
+        set_part(1, 68, 22, 22, 44, 6, t, theme::ACCENT);
+        set_part(2, 26, 18, 48, 54, 8, t, theme::ACCENT);
+        set_part(3, 38, 15, 24, 8, 4, norm, theme::CARD);
+        break;
+      }
+
+      case 17:  // Shirt (Kurzarm)
+        set_part(0, 12, 22, 20, 22, 5, good, theme::ACCENT);
+        set_part(1, 68, 22, 20, 22, 5, good, theme::ACCENT);
+        set_part(2, 26, 18, 48, 54, 8, good, theme::ACCENT);
+        set_part(3, 38, 15, 24, 8, 4, norm, theme::CARD);
+        break;
+
+      case 2:   // Socken
+      case 11:  // dicke Socken
+      case 15:  // dünne Socken
+      case 24:  // Füßlinge
+      {
+        const auto t = (id == 11 || id == 24) ? warn : acc;
+        set_part(0, 22, 20, 20, 46, 6, t, theme::ACCENT);
+        set_part(1, 12, 54, 30, 18, 8, t, theme::ACCENT);
+        set_part(2, 58, 20, 20, 46, 6, t, theme::ACCENT);
+        set_part(3, 58, 54, 30, 18, 8, t, theme::ACCENT);
+        break;
+      }
+
+      case 18:  // Barfuß
+        set_part(0, 24, 30, 20, 44, 10, good, theme::ACCENT);
+        set_part(1, 56, 30, 20, 44, 10, good, theme::ACCENT);
+        set_part(2, 24, 20, 8, 8, 4, good, theme::ACCENT);
+        set_part(3, 35, 20, 8, 8, 4, good, theme::ACCENT);
+        set_part(4, 57, 20, 8, 8, 4, good, theme::ACCENT);
+        set_part(5, 68, 20, 8, 8, 4, good, theme::ACCENT);
+        break;
+
+      case 22:  // Handschuhe
+      case 31:  // dünne Handschuhe
+      {
+        const auto t = (id == 22) ? warn : acc;
+        set_part(0, 16, 26, 26, 46, 12, t, theme::ACCENT);
+        set_part(1, 36, 40, 12, 18, 6, t, theme::ACCENT);
+        set_part(2, 58, 26, 26, 46, 12, t, theme::ACCENT);
+        set_part(3, 52, 40, 12, 18, 6, t, theme::ACCENT);
+        break;
+      }
+
+      case 23:  // Wintermütze
+      case 35:  // Mütze
+      case 36:  // dünne Mütze
+      case 41:  // dünnes Häubchen
+      {
+        const auto t = (id == 23 || id == 35) ? warn : acc;
+        set_part(0, 20, 28, 60, 44, 24, t, theme::ACCENT);
+        set_part(1, 16, 62, 68, 14, 6, norm, theme::MUTED);
+        if (id == 23 || id == 35) {
+          set_part(2, 41, 12, 18, 18, 9, t, theme::ACCENT);
+        }
+        break;
+      }
+
+      case 37:  // Sonnenhut
+        set_part(0, 24, 26, 52, 34, 18, warn, theme::ACCENT);
+        set_part(1, 10, 54, 80, 14, 7, warn, theme::ACCENT);
+        break;
+
+      case 29:  // Halstuch
+        set_part(0, 16, 24, 68, 18, 6, warn, theme::ACCENT);
+        set_part(1, 26, 38, 48, 22, 8, warn, theme::ACCENT);
+        set_part(2, 38, 54, 24, 22, 8, warn, theme::ACCENT);
+        break;
+
+      case 12:  // dünne Decke
+      case 26:  // Lammfell
+      case 40:  // Einschlagdecke
+      {
+        const auto t = (id == 26) ? warn : good;
+        set_part(0, 18, 18, 64, 64, 12, t, theme::ACCENT);
+        set_part(1, 26, 26, 48, 48, 8, norm, theme::CARD);
+        set_part(2, 32, 32, 36, 36, 6, t, theme::ACCENT);
+        break;
+      }
+
+      case 38:  // Regenschutz
+      default:
+        set_part(0, 14, 26, 72, 34, 30, acc, theme::ACCENT);
+        set_part(1, 47, 18, 6, 56, 3, norm, theme::MUTED);
+        set_part(2, 47, 68, 16, 10, 4, norm, theme::MUTED);
+        break;
+    }
+  }
+};
+
 // Estimate indoor room temperature from outdoor temperature (baby-wetter.de CalculateInsideTemperature default Neubau/Mittel)
 static int estimate_inside_temperature(float temp_outside) {
   const float factor = temp_outside >= 20.0f ? (0.15f * 1.5f) : 0.15f;
@@ -758,6 +1021,9 @@ class OutfitCard : public tessera::Card {
       lv_obj_set_size(slot_bg_[i], cell_w, cell_h);
       lv_obj_set_pos(slot_bg_[i], cx, cy);
 
+      slot_icon_[i].build(parent_, cx + (cell_w - pic_side) / 2, cy + ui::px(2), pic_side);
+      pic_shown_[i] = false;
+
       if (has_pics_) {
         slot_pic_[i] = ui::picture(parent_, tessera::Placeholder::NONE);
         lv_obj_set_size(slot_pic_[i], pic_side, pic_side);
@@ -767,7 +1033,7 @@ class OutfitCard : public tessera::Card {
       slot_cap_[i] = ui::label(parent_, Font::BODY, theme::INK);
       lv_obj_set_size(slot_cap_[i], cell_w - ui::px(4), cap_h);
       lv_obj_set_style_text_align(slot_cap_[i], LV_TEXT_ALIGN_CENTER, 0);
-      lv_obj_set_pos(slot_cap_[i], cx + ui::px(2), has_pics_ ? (cy + cell_h - cap_h - ui::px(2)) : (cy + (cell_h - cap_h) / 2));
+      lv_obj_set_pos(slot_cap_[i], cx + ui::px(2), cy + cell_h - cap_h - ui::px(2));
     }
 
     // Pager bar at the bottom when more than 8 items exist
@@ -820,6 +1086,20 @@ class OutfitCard : public tessera::Card {
   void on_tick(uint32_t epoch) override { render(epoch); }
 
   void on_theme() override { render(tessera::epoch()); }
+
+  void on_picture(lv_obj_t *place, tessera::PictureState state) override {
+    for (int i = 0; i < 8; ++i) {
+      if (slot_pic_[i] == place) {
+        pic_shown_[i] = (state == tessera::PictureState::SHOWN);
+        if (pic_shown_[i]) {
+          slot_icon_[i].hide();
+        } else if (slot_item_[i] < kCatalogCount) {
+          slot_icon_[i].draw(slot_item_[i]);
+        }
+        break;
+      }
+    }
+  }
 
   bool on_back() override {
     if (dropdown_open_) {
@@ -910,20 +1190,29 @@ class OutfitCard : public tessera::Card {
       const int item_idx = start + i;
       if (item_idx < res.count && !dropdown_open_) {
         const uint8_t id = res.items[item_idx];
+        if (slot_item_[i] != id) {
+          slot_item_[i] = id;
+          pic_shown_[i] = false;
+        }
         lv_obj_clear_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
         ui::set_text(slot_cap_[i], item_label(plugin_, id));
+        if (!pic_shown_[i]) {
+          slot_icon_[i].draw(id);
+        }
         if (has_pics_ && slot_pic_[i]) {
           lv_obj_clear_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
           ui::set_picture(slot_pic_[i], item_image(id), tessera::Fit::CONTAIN);
         }
       } else {
+        slot_item_[i] = 255;
+        pic_shown_[i] = false;
         if (dropdown_open_ && item_idx < res.count) {
-          // Keep background/labels dimmed under dropdown, hide pictures where dropdown overlaps
           const uint8_t id = res.items[item_idx];
           lv_obj_clear_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
           lv_obj_clear_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
           ui::set_text(slot_cap_[i], item_label(plugin_, id));
+          slot_icon_[i].hide();
           if (has_pics_ && slot_pic_[i]) {
             ui::set_picture(slot_pic_[i], "", tessera::Fit::CONTAIN);
             lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
@@ -931,6 +1220,7 @@ class OutfitCard : public tessera::Card {
         } else {
           lv_obj_add_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
           lv_obj_add_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
+          slot_icon_[i].hide();
           if (has_pics_ && slot_pic_[i]) {
             ui::set_picture(slot_pic_[i], "", tessera::Fit::CONTAIN);
             lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
@@ -965,6 +1255,9 @@ class OutfitCard : public tessera::Card {
   lv_obj_t *slot_bg_[8]{};
   lv_obj_t *slot_pic_[8]{};
   lv_obj_t *slot_cap_[8]{};
+  GarmentIcon slot_icon_[8]{};
+  uint8_t slot_item_[8]{255, 255, 255, 255, 255, 255, 255, 255};
+  bool pic_shown_[8]{};
   lv_obj_t *prev_btn_{}, *prev_lbl_{}, *next_btn_{}, *next_lbl_{}, *page_lbl_{};
 
   int width_ = 0, height_ = 0;
@@ -975,7 +1268,7 @@ class OutfitCard : public tessera::Card {
   bool dropdown_open_ = false;
 };
 
-// ---- OutfitTile: Responsive tile (1x1 up to 4x4) with Situation dropdown pill & clothing items ----
+// ---- OutfitTile: Responsive tile (1x1 up to full-page 2x3 / 4x4) with Situation dropdown pill & clothing items ----
 
 class OutfitTile : public tessera::Tile {
  public:
@@ -1028,15 +1321,22 @@ class OutfitTile : public tessera::Tile {
     const int content_top = (cols_ == 1) ? (header_h_ + ui::line_height(Font::BODY) + ui::px(4)) : (header_h_ + pad);
     const int content_h = std::max(1, height_ - content_top);
 
-    has_pics_ = ui::pictures() && (rows_ >= 2 || cols_ >= 2);
-    if (has_pics_) {
-      grid_cols_ = std::min<int>(4, std::max<int>(2, cols_));
-      grid_rows_ = (rows_ >= 3 && content_h >= ui::px(large ? 150 : 100)) ? 2 : 1;
+    show_grid_ = (rows_ >= 2 || cols_ >= 2);
+    has_pics_ = ui::pictures() && show_grid_;
+    if (show_grid_) {
+      if (width_ >= ui::px(large ? 300 : 210)) {
+        grid_cols_ = 4;
+      } else if (width_ >= ui::px(large ? 220 : 150)) {
+        grid_cols_ = 3;
+      } else {
+        grid_cols_ = 2;
+      }
+      grid_rows_ = (rows_ >= 2 && content_h >= ui::px(large ? 110 : 76)) ? 2 : 1;
       slot_count_ = std::min(8, grid_cols_ * grid_rows_);
       const int cell_w = (width_ - pad * (grid_cols_ - 1)) / grid_cols_;
       const int cell_h = (content_h - pad * (grid_rows_ - 1)) / grid_rows_;
-      const int cap_h = ui::line_height(Font::BODY);
-      const int pic_side = std::max(1, std::min(cell_w - ui::px(2), cell_h - cap_h - ui::px(2)));
+      const int cap_h = ui::line_height(Font::SMALL);
+      const int pic_side = std::max(1, std::min(cell_w - ui::px(4), cell_h - cap_h - ui::px(4)));
 
       for (int i = 0; i < slot_count_; ++i) {
         const int col = i % grid_cols_;
@@ -1044,20 +1344,31 @@ class OutfitTile : public tessera::Tile {
         const int cx = col * (cell_w + pad);
         const int cy = content_top + row * (cell_h + pad);
 
-        slot_pic_[i] = ui::picture(c.parent, tessera::Placeholder::NONE);
-        lv_obj_set_size(slot_pic_[i], pic_side, pic_side);
-        lv_obj_set_pos(slot_pic_[i], cx + (cell_w - pic_side) / 2, cy);
+        slot_bg_[i] = ui::block(c.parent, theme::TRACK);
+        lv_obj_set_size(slot_bg_[i], cell_w, cell_h);
+        lv_obj_set_pos(slot_bg_[i], cx, cy);
 
-        slot_cap_[i] = ui::label(c.parent, Font::BODY, theme::INK);
-        lv_obj_set_size(slot_cap_[i], cell_w, cap_h);
+        slot_icon_[i].build(c.parent, cx + (cell_w - pic_side) / 2, cy + ui::px(2), pic_side);
+        pic_shown_[i] = false;
+
+        if (has_pics_) {
+          slot_pic_[i] = ui::picture(c.parent, tessera::Placeholder::NONE);
+          lv_obj_set_size(slot_pic_[i], pic_side, pic_side);
+          lv_obj_set_pos(slot_pic_[i], cx + (cell_w - pic_side) / 2, cy + ui::px(2));
+        }
+
+        slot_cap_[i] = ui::label(c.parent, Font::SMALL, theme::INK);
+        lv_obj_set_size(slot_cap_[i], cell_w - ui::px(2), cap_h);
         lv_obj_set_style_text_align(slot_cap_[i], LV_TEXT_ALIGN_CENTER, 0);
-        lv_obj_set_pos(slot_cap_[i], cx, cy + cell_h - cap_h);
+        lv_obj_set_pos(slot_cap_[i], cx + ui::px(1), cy + cell_h - cap_h - ui::px(2));
       }
     } else {
       summary_lbl_ = ui::text(c.parent, Font::BODY, theme::INK);
       lv_obj_set_size(summary_lbl_, width_, content_h);
       lv_obj_set_pos(summary_lbl_, 0, content_top);
     }
+
+    render(tessera::epoch());
   }
 
   void on_state(JsonObjectConst data) override {
@@ -1072,6 +1383,20 @@ class OutfitTile : public tessera::Tile {
   void on_tick(uint32_t epoch) override { render(epoch); }
 
   void on_theme() override { render(tessera::epoch()); }
+
+  void on_picture(lv_obj_t *place, tessera::PictureState state) override {
+    for (int i = 0; i < slot_count_; ++i) {
+      if (slot_pic_[i] == place) {
+        pic_shown_[i] = (state == tessera::PictureState::SHOWN);
+        if (pic_shown_[i]) {
+          slot_icon_[i].hide();
+        } else if (slot_item_[i] < kCatalogCount) {
+          slot_icon_[i].draw(slot_item_[i]);
+        }
+        break;
+      }
+    }
+  }
 
   void on_tap() override {
     const tessera::Point pt = tessera::tap_point();
@@ -1103,16 +1428,26 @@ class OutfitTile : public tessera::Tile {
     }
     ui::set_text(meta_lbl_, meta);
 
-    if (has_pics_) {
+    if (show_grid_) {
       // Skip Windel (index 0) on compact tile grids when more items exist than fit, so outer clothes are visible first
       const int offset = (res.count > slot_count_ && res.count > 1 && res.items[0] == 0) ? 1 : 0;
       for (int i = 0; i < slot_count_; ++i) {
         const int idx = offset + i;
         if (idx < res.count) {
           const uint8_t id = res.items[idx];
-          lv_obj_clear_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
+          if (slot_item_[i] != id) {
+            slot_item_[i] = id;
+            pic_shown_[i] = false;
+          }
+          lv_obj_clear_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
           lv_obj_clear_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
-          ui::set_picture(slot_pic_[i], item_image(id), tessera::Fit::CONTAIN);
+          if (!pic_shown_[i]) {
+            slot_icon_[i].draw(id);
+          }
+          if (has_pics_ && slot_pic_[i]) {
+            lv_obj_clear_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
+            ui::set_picture(slot_pic_[i], item_image(id), tessera::Fit::CONTAIN);
+          }
           if (i == slot_count_ - 1 && idx + 1 < res.count) {
             char more[48];
             std::snprintf(more, sizeof(more), "%s +%d", item_label(plugin_, id), (res.count - 1) - idx);
@@ -1121,9 +1456,15 @@ class OutfitTile : public tessera::Tile {
             ui::set_text(slot_cap_[i], item_label(plugin_, id));
           }
         } else {
-          ui::set_picture(slot_pic_[i], "", tessera::Fit::CONTAIN);
-          lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
+          slot_item_[i] = 255;
+          pic_shown_[i] = false;
+          lv_obj_add_flag(slot_bg_[i], LV_OBJ_FLAG_HIDDEN);
           lv_obj_add_flag(slot_cap_[i], LV_OBJ_FLAG_HIDDEN);
+          slot_icon_[i].hide();
+          if (has_pics_ && slot_pic_[i]) {
+            ui::set_picture(slot_pic_[i], "", tessera::Fit::CONTAIN);
+            lv_obj_add_flag(slot_pic_[i], LV_OBJ_FLAG_HIDDEN);
+          }
         }
       }
     } else if (summary_lbl_) {
@@ -1142,12 +1483,17 @@ class OutfitTile : public tessera::Tile {
 
   BabyWetter *plugin_;
   lv_obj_t *pill_bg_{}, *pill_lbl_{}, *pill_icon_{}, *meta_lbl_{}, *summary_lbl_{};
+  lv_obj_t *slot_bg_[8]{};
   lv_obj_t *slot_pic_[8]{};
   lv_obj_t *slot_cap_[8]{};
+  GarmentIcon slot_icon_[8]{};
+  uint8_t slot_item_[8]{255, 255, 255, 255, 255, 255, 255, 255};
+  bool pic_shown_[8]{};
 
   int width_ = 0, height_ = 0, cols_ = 1, rows_ = 1, tile_index_ = -1;
   int header_h_ = 0, pill_x_ = 0, pill_w_ = 0;
   int grid_cols_ = 2, grid_rows_ = 1, slot_count_ = 0;
+  bool show_grid_ = false;
   bool has_pics_ = false;
   bool fixed_sit_ = false;
   Situation tile_sit_ = Situation::ALLGEMEIN;
