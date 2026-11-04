@@ -2,7 +2,6 @@
 #include <cstdint>
 #include "esphome/core/component.h"
 #include "esphome/components/select/select.h"
-#include "esphome/components/sensor/sensor.h"
 #include "esphome/components/smart_display/plugin_api.h"
 
 namespace esphome::baby_wetter {
@@ -38,14 +37,7 @@ class BabyWetter : public Component, public tessera::Plugin {
   float get_setup_priority() const override { return setup_priority::DATA; }
   bool settings(tessera::SettingsPage &page) override;
 
-  void set_outdoor_temp(sensor::Sensor *s) { outdoor_temp_ = s; }
-  void set_indoor_temp(sensor::Sensor *s) { indoor_temp_ = s; }
   void set_situation(select::Select *s) { situation_ = s; }
-  void set_birthdate(const char *date) { birthdate_ = date ? date : ""; }
-
-  float outdoor_temp() const;
-  float indoor_temp() const;
-  const char *birthdate() const { return birthdate_.c_str(); }
 
   Situation active_situation() const;
   int situation_index() const { return static_cast<int>(active_situation()); }
@@ -63,7 +55,7 @@ class BabyWetter : public Component, public tessera::Plugin {
     return v;
   }
 
-  // Last tile context for the detail card so the card can also use per-tile sensor/birthdate overrides if set.
+  // Store the tile's configured sensors/birthdate so the detail card uses them seamlessly.
   void set_card_overrides(float tile_out_temp, float tile_in_temp, bool tile_rain, const char *tile_birthdate,
                           Situation tile_sit, bool fixed_sit) {
     card_out_temp_ = tile_out_temp;
@@ -79,10 +71,7 @@ class BabyWetter : public Component, public tessera::Plugin {
                         uint32_t epoch) const;
 
  protected:
-  sensor::Sensor *outdoor_temp_{};
-  sensor::Sensor *indoor_temp_{};
   select::Select *situation_{};
-  tessera::Text birthdate_{};
 
   bool open_with_dropdown_ = false;
   float card_out_temp_ = NAN;

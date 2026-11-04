@@ -158,19 +158,21 @@ struct GarmentIcon {
         break;
 
       case 1:  // Langarmbody
-        set_part(0, 10, 22, 24, 42, 6, acc, theme::ACCENT);
-        set_part(1, 66, 22, 24, 42, 6, acc, theme::ACCENT);
-        set_part(2, 28, 18, 44, 52, 8, acc, theme::ACCENT);
+        set_part(0, 6, 20, 18, 44, 6, acc, theme::ACCENT);
+        set_part(1, 76, 20, 18, 44, 6, acc, theme::ACCENT);
+        set_part(2, 28, 16, 44, 50, 8, acc, theme::ACCENT);
         set_part(3, 35, 62, 30, 18, 9, acc, theme::ACCENT);
-        set_part(4, 38, 15, 24, 8, 4, norm, theme::CARD);
+        set_part(4, 38, 12, 24, 10, 5, norm, theme::TRACK);
+        set_part(5, 43, 72, 14, 5, 2, norm, theme::TRACK);
         break;
 
       case 7:  // Kurzarmbody
-        set_part(0, 14, 22, 20, 20, 5, acc, theme::ACCENT);
-        set_part(1, 66, 22, 20, 20, 5, acc, theme::ACCENT);
-        set_part(2, 28, 18, 44, 52, 8, acc, theme::ACCENT);
+        set_part(0, 8, 20, 16, 22, 5, acc, theme::ACCENT);
+        set_part(1, 76, 20, 16, 22, 5, acc, theme::ACCENT);
+        set_part(2, 28, 16, 44, 50, 8, acc, theme::ACCENT);
         set_part(3, 35, 62, 30, 18, 9, acc, theme::ACCENT);
-        set_part(4, 38, 15, 24, 8, 4, norm, theme::CARD);
+        set_part(4, 38, 12, 24, 10, 5, norm, theme::TRACK);
+        set_part(5, 43, 72, 14, 5, 2, norm, theme::TRACK);
         break;
 
       case 3:   // Schlafanzug
@@ -178,13 +180,13 @@ struct GarmentIcon {
       case 28:  // Tragejacke/-cover
       {
         const auto t = (id == 21) ? warn : (id == 28 ? good : acc);
-        set_part(0, 10, 20, 22, 38, 6, t, theme::ACCENT);
-        set_part(1, 68, 20, 22, 38, 6, t, theme::ACCENT);
+        set_part(0, 6, 20, 18, 38, 6, t, theme::ACCENT);
+        set_part(1, 76, 20, 18, 38, 6, t, theme::ACCENT);
         set_part(2, 28, 16, 44, 42, 8, t, theme::ACCENT);
         set_part(3, 28, 52, 19, 34, 6, t, theme::ACCENT);
         set_part(4, 53, 52, 19, 34, 6, t, theme::ACCENT);
         if (id == 21 || id == 28) {
-          set_part(5, 48, 20, 4, 36, 2, norm, theme::CARD);
+          set_part(5, 48, 24, 4, 32, 2, norm, theme::TRACK);
         }
         break;
       }
@@ -237,10 +239,10 @@ struct GarmentIcon {
       case 25:  // Jacke
       {
         const auto t = (id == 25) ? warn : good;
-        set_part(0, 10, 22, 22, 46, 6, t, theme::ACCENT);
-        set_part(1, 68, 22, 22, 46, 6, t, theme::ACCENT);
-        set_part(2, 26, 18, 48, 56, 8, t, theme::ACCENT);
-        set_part(3, 47, 18, 6, 56, 2, norm, theme::CARD);
+        set_part(0, 6, 22, 18, 46, 6, t, theme::ACCENT);
+        set_part(1, 76, 22, 18, 46, 6, t, theme::ACCENT);
+        set_part(2, 28, 18, 44, 56, 8, t, theme::ACCENT);
+        set_part(3, 47, 18, 6, 56, 2, norm, theme::TRACK);
         break;
       }
 
@@ -250,32 +252,41 @@ struct GarmentIcon {
       case 34:  // Pullover
       {
         const auto t = (id == 13 || id == 34) ? warn : acc;
-        set_part(0, 10, 22, 22, 44, 6, t, theme::ACCENT);
-        set_part(1, 68, 22, 22, 44, 6, t, theme::ACCENT);
-        set_part(2, 26, 18, 48, 54, 8, t, theme::ACCENT);
-        set_part(3, 38, 15, 24, 8, 4, norm, theme::CARD);
+        set_part(0, 6, 22, 18, 44, 6, t, theme::ACCENT);
+        set_part(1, 76, 22, 18, 44, 6, t, theme::ACCENT);
+        set_part(2, 28, 18, 44, 52, 8, t, theme::ACCENT);
+        set_part(3, 38, 14, 24, 10, 5, norm, theme::TRACK);
+        set_part(4, 28, 64, 44, 8, 3, norm, theme::MUTED);
         break;
       }
 
       case 17:  // Shirt (Kurzarm)
-        set_part(0, 12, 22, 20, 22, 5, good, theme::ACCENT);
-        set_part(1, 68, 22, 20, 22, 5, good, theme::ACCENT);
-        set_part(2, 26, 18, 48, 54, 8, good, theme::ACCENT);
-        set_part(3, 38, 15, 24, 8, 4, norm, theme::CARD);
+        set_part(0, 8, 22, 16, 22, 5, good, theme::ACCENT);
+        set_part(1, 76, 22, 16, 22, 5, good, theme::ACCENT);
+        set_part(2, 28, 18, 44, 54, 8, good, theme::ACCENT);
+        set_part(3, 38, 14, 24, 10, 5, norm, theme::TRACK);
         break;
 
       case 2:   // Socken
       case 11:  // dicke Socken
       case 15:  // dünne Socken
-      case 24:  // Füßlinge
       {
-        const auto t = (id == 11 || id == 24) ? warn : acc;
+        const auto t = (id == 11) ? warn : acc;
         set_part(0, 22, 20, 20, 46, 6, t, theme::ACCENT);
         set_part(1, 12, 54, 30, 18, 8, t, theme::ACCENT);
         set_part(2, 58, 20, 20, 46, 6, t, theme::ACCENT);
         set_part(3, 58, 54, 30, 18, 8, t, theme::ACCENT);
         break;
       }
+
+      case 24:  // Füßlinge (Booties)
+        set_part(0, 22, 24, 20, 32, 6, warn, theme::ACCENT);
+        set_part(1, 10, 46, 34, 26, 12, warn, theme::ACCENT);
+        set_part(2, 20, 20, 24, 10, 4, norm, theme::MUTED);
+        set_part(3, 58, 24, 20, 32, 6, warn, theme::ACCENT);
+        set_part(4, 56, 46, 34, 26, 12, warn, theme::ACCENT);
+        set_part(5, 56, 20, 24, 10, 4, norm, theme::MUTED);
+        break;
 
       case 18:  // Barfuß
         set_part(0, 24, 30, 20, 44, 10, good, theme::ACCENT);
@@ -290,10 +301,12 @@ struct GarmentIcon {
       case 31:  // dünne Handschuhe
       {
         const auto t = (id == 22) ? warn : acc;
-        set_part(0, 16, 26, 26, 46, 12, t, theme::ACCENT);
-        set_part(1, 36, 40, 12, 18, 6, t, theme::ACCENT);
-        set_part(2, 58, 26, 26, 46, 12, t, theme::ACCENT);
-        set_part(3, 52, 40, 12, 18, 6, t, theme::ACCENT);
+        set_part(0, 10, 20, 26, 42, 13, t, theme::ACCENT);
+        set_part(1, 32, 34, 10, 16, 5, t, theme::ACCENT);
+        set_part(2, 12, 62, 22, 10, 3, norm, theme::MUTED);
+        set_part(3, 64, 20, 26, 42, 13, t, theme::ACCENT);
+        set_part(4, 58, 34, 10, 16, 5, t, theme::ACCENT);
+        set_part(5, 66, 62, 22, 10, 3, norm, theme::MUTED);
         break;
       }
 
@@ -939,6 +952,19 @@ static void evaluate_outdoor(int t, bool older, Situation sit, bool rain, Outfit
 
 static float parse_sensor_state(JsonObjectConst entity_obj) {
   if (entity_obj.isNull()) return NAN;
+  JsonObjectConst attrs = entity_obj["attributes"];
+  if (!attrs.isNull()) {
+    JsonVariantConst curr = attrs["current_temperature"];
+    if (!curr.isNull()) {
+      float v = curr.as<float>();
+      if (!std::isnan(v)) return v;
+    }
+    JsonVariantConst temp = attrs["temperature"];
+    if (!temp.isNull()) {
+      float v = temp.as<float>();
+      if (!std::isnan(v)) return v;
+    }
+  }
   const char *state = entity_obj["state"] | "";
   if (!state[0] || std::strcmp(state, "unavailable") == 0 || std::strcmp(state, "unknown") == 0) return NAN;
   char *end = nullptr;
@@ -1007,7 +1033,7 @@ class OutfitCard : public tessera::Card {
     const int rows = 2;
     const int cell_w = (width_ - pad * (cols - 1)) / cols;
     const int cell_h = (grid_h - pad * (rows - 1)) / rows;
-    const int cap_h = ui::line_height(Font::BODY);
+    const int cap_h = ui::line_height(Font::BODY) * 2;
     const int pic_side = std::max(1, std::min(cell_w - ui::px(4), cell_h - cap_h - ui::px(4)));
 
     has_pics_ = ui::pictures();
@@ -1030,7 +1056,7 @@ class OutfitCard : public tessera::Card {
         lv_obj_set_pos(slot_pic_[i], cx + (cell_w - pic_side) / 2, cy + ui::px(2));
       }
 
-      slot_cap_[i] = ui::label(parent_, Font::BODY, theme::INK);
+      slot_cap_[i] = ui::text(parent_, Font::BODY, theme::INK);
       lv_obj_set_size(slot_cap_[i], cell_w - ui::px(4), cap_h);
       lv_obj_set_style_text_align(slot_cap_[i], LV_TEXT_ALIGN_CENTER, 0);
       lv_obj_set_pos(slot_cap_[i], cx + ui::px(2), cy + cell_h - cap_h - ui::px(2));
@@ -1286,6 +1312,7 @@ class OutfitTile : public tessera::Tile {
     fixed_sit_ = (std::strcmp(sit_opt, "follow") != 0 && sit_opt[0] != '\0');
     tile_sit_ = BabyWetter::parse_situation_code(sit_opt, Situation::ALLGEMEIN);
     tile_birthdate_ = c.options["birthdate"] | "";
+    plugin_->set_card_overrides(opt_out_temp_, opt_in_temp_, opt_rain_, tile_birthdate_.c_str(), tile_sit_, fixed_sit_);
 
     const bool large = ui::large();
     const int pad = ui::px(large ? 6 : 4);
@@ -1335,7 +1362,9 @@ class OutfitTile : public tessera::Tile {
       slot_count_ = std::min(8, grid_cols_ * grid_rows_);
       const int cell_w = (width_ - pad * (grid_cols_ - 1)) / grid_cols_;
       const int cell_h = (content_h - pad * (grid_rows_ - 1)) / grid_rows_;
-      const int cap_h = ui::line_height(Font::BODY);
+      const int lh = ui::line_height(Font::BODY);
+      const bool two_line_cap = (cell_h >= lh * 3 + ui::px(14));
+      const int cap_h = two_line_cap ? (lh * 2) : lh;
       const int pic_side = std::max(1, std::min(cell_w - ui::px(4), cell_h - cap_h - ui::px(4)));
 
       for (int i = 0; i < slot_count_; ++i) {
@@ -1357,7 +1386,8 @@ class OutfitTile : public tessera::Tile {
           lv_obj_set_pos(slot_pic_[i], cx + (cell_w - pic_side) / 2, cy + ui::px(2));
         }
 
-        slot_cap_[i] = ui::label(c.parent, Font::BODY, theme::INK);
+        slot_cap_[i] = two_line_cap ? ui::text(c.parent, Font::BODY, theme::INK)
+                                    : ui::label(c.parent, Font::BODY, theme::INK);
         lv_obj_set_size(slot_cap_[i], cell_w - ui::px(2), cap_h);
         lv_obj_set_style_text_align(slot_cap_[i], LV_TEXT_ALIGN_CENTER, 0);
         lv_obj_set_pos(slot_cap_[i], cx + ui::px(1), cy + cell_h - cap_h - ui::px(2));
@@ -1376,8 +1406,13 @@ class OutfitTile : public tessera::Tile {
     if (!entities.isNull()) {
       opt_out_temp_ = parse_sensor_state(entities["temp_sensor"]);
       opt_in_temp_ = parse_sensor_state(entities["indoor_temp_sensor"]);
-      opt_rain_ = parse_rain_entity(entities["rain_sensor"]);
+      if (!entities["rain_sensor"].isNull()) {
+        opt_rain_ = parse_rain_entity(entities["rain_sensor"]);
+      } else {
+        opt_rain_ = parse_rain_entity(entities["temp_sensor"]);
+      }
     }
+    plugin_->set_card_overrides(opt_out_temp_, opt_in_temp_, opt_rain_, tile_birthdate_.c_str(), tile_sit_, fixed_sit_);
   }
 
   void on_tick(uint32_t epoch) override { render(epoch); }
@@ -1410,9 +1445,9 @@ class OutfitTile : public tessera::Tile {
  private:
   void render(uint32_t epoch) {
     const Situation sit = fixed_sit_ ? tile_sit_ : plugin_->active_situation();
-    const float out_t = !std::isnan(opt_out_temp_) ? opt_out_temp_ : plugin_->outdoor_temp();
-    const float in_t = !std::isnan(opt_in_temp_) ? opt_in_temp_ : plugin_->indoor_temp();
-    const char *bdate = !tile_birthdate_.empty() ? tile_birthdate_.c_str() : plugin_->birthdate();
+    const float out_t = opt_out_temp_;
+    const float in_t = opt_in_temp_;
+    const char *bdate = tile_birthdate_.c_str();
 
     const OutfitResult res = plugin_->evaluate(out_t, in_t, opt_rain_, bdate, sit, epoch);
 
@@ -1511,14 +1546,6 @@ void BabyWetter::setup() {
   add_card("details", [this]() { return new OutfitCard(this); }, true);
 }
 
-float BabyWetter::outdoor_temp() const {
-  return (outdoor_temp_ && outdoor_temp_->has_state() && !std::isnan(outdoor_temp_->state)) ? outdoor_temp_->state : NAN;
-}
-
-float BabyWetter::indoor_temp() const {
-  return (indoor_temp_ && indoor_temp_->has_state() && !std::isnan(indoor_temp_->state)) ? indoor_temp_->state : NAN;
-}
-
 Situation BabyWetter::active_situation() const {
   if (!situation_ || !situation_->has_state()) return Situation::ALLGEMEIN;
   const auto &s = situation_->current_option();
@@ -1575,10 +1602,7 @@ Situation BabyWetter::parse_situation_code(const char *code, Situation fallback)
 
 OutfitResult BabyWetter::evaluate_for_card(uint32_t epoch) const {
   const Situation sit = card_fixed_sit_ ? card_sit_ : active_situation();
-  const float out_t = !std::isnan(card_out_temp_) ? card_out_temp_ : outdoor_temp();
-  const float in_t = !std::isnan(card_in_temp_) ? card_in_temp_ : indoor_temp();
-  const char *bdate = !card_birthdate_.empty() ? card_birthdate_.c_str() : birthdate();
-  return evaluate(out_t, in_t, card_rain_, bdate, sit, epoch);
+  return evaluate(card_out_temp_, card_in_temp_, card_rain_, card_birthdate_.c_str(), sit, epoch);
 }
 
 OutfitResult BabyWetter::evaluate(float out_temp, float in_temp, bool rain, const char *birthdate_str, Situation sit,

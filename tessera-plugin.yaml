@@ -1,7 +1,7 @@
-# Baby Wetter (baby-wetter.de): clothing recommendations for babies based on outdoor/indoor temperature, age (calculated
-# from birthdate), and situation (Allgemein, Kinderwagen, Babytrage, Auto, Schlafen, Zuhause).
+# Baby Wetter (baby-wetter.de): clothing recommendations for babies based on outdoor temperature (from a weather entity
+# or temperature sensor), indoor temperature sensor, age (calculated from birthdate), and situation.
 id: baby_wetter
-version: 0.1.3
+version: 0.1.4
 api: "0.17"
 icon: baby-carriage
 maintainer: lhoer
@@ -15,14 +15,8 @@ flash_kb: 16
 
 permissions:
   network: [baby-wetter.de]
-  read_entities: ["{temperature_sensor}", "{indoor_sensor}"]
 attributes: [cloud]
 privacy: https://baby-wetter.de/datenschutzerklaerung/
-
-inputs:
-  - { id: temperature_sensor, kind: entity, domains: [sensor], scope: screen, label: input_temp_sensor, hint: input_temp_sensor_hint }
-  - { id: indoor_sensor, kind: entity, domains: [sensor], scope: screen, label: input_indoor_sensor, hint: input_indoor_sensor_hint }
-  - { id: birthdate, kind: text, scope: all, label: input_birthdate, hint: input_birthdate_hint }
 
 settings:
   - { key: baby_wetter_situation, label: setting_situation, hint: setting_situation_hint }
@@ -36,6 +30,22 @@ tiles:
     pictures: 8
     example: tile_example
     options:
+      - id: temp_sensor
+        kind: entity
+        domains: [weather, sensor]
+        attributes: [temperature, precipitation_probability]
+        label: opt_temp_sensor
+        hint: opt_temp_sensor_hint
+      - id: indoor_temp_sensor
+        kind: entity
+        domains: [sensor, climate]
+        attributes: [current_temperature, temperature]
+        label: opt_indoor_sensor
+        hint: opt_indoor_sensor_hint
+      - id: birthdate
+        kind: text
+        label: opt_birthdate
+        hint: opt_birthdate_hint
       - id: situation
         kind: choice
         default: follow
@@ -49,10 +59,12 @@ tiles:
           - { value: auto, label: sit_auto }
           - { value: schlafen, label: sit_schlafen }
           - { value: zuhause, label: sit_zuhause }
-      - { id: temp_sensor, kind: entity, domains: [sensor], label: opt_temp_sensor, hint: opt_temp_sensor_hint }
-      - { id: indoor_temp_sensor, kind: entity, domains: [sensor], label: opt_indoor_sensor, hint: opt_indoor_sensor_hint }
-      - { id: birthdate, kind: text, label: opt_birthdate, hint: opt_birthdate_hint }
-      - { id: rain_sensor, kind: entity, domains: [sensor, weather], attributes: [precipitation_probability], label: opt_rain_sensor, hint: opt_rain_sensor_hint }
+      - id: rain_sensor
+        kind: entity
+        domains: [weather, sensor]
+        attributes: [precipitation_probability]
+        label: opt_rain_sensor
+        hint: opt_rain_sensor_hint
 
 cards:
   - { id: details, name: card_name, wide: true, pictures: 8 }

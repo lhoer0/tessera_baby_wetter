@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.4 - 2026-11-04
+
+- Simplified configuration: removed duplicate plugin-level inputs so sensors and birthdate are configured exclusively on the tile in the page editor.
+- Added direct `weather` entity support for `temp_sensor` (reads `temperature` attribute and rain status automatically without needing a separate outdoor temperature sensor).
+- Switched clothing item captions on the tile and detail card to 2-line wrapped text (`ui::text`) to prevent `...` truncation on longer names (`dicke Strumpfhose`, `dünne Handschuhe`, `Langarmbody`, `dünner Pullover`).
+- Refined garment vector icons (`Handschuhe`, `Langarmbody`, `Pullover`, `Füßlinge`, `Wollwalk`) for clearer silhouettes.
+
 ## 0.1.3 - 2026-11-04
 
 - Replaced `tessera::Tone::WARN` with `tessera::Tone::BUSY` in `GarmentIcon::draw()`.

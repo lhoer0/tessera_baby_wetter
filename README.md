@@ -4,13 +4,12 @@
 
 ## Set up
 
-1. Copy the `baby_wetter` folder into Home Assistant under `/config/tessera-plugins/baby_wetter/` (or add it via a GitHub repository link in the Tessera app under **Plugins -> Add with a link**).
-2. Add the plugin to your screen in Tessera and configure the inputs:
-   - **Außentemperatursensor (`temperature_sensor`)**: Your Home Assistant outdoor temperature sensor (used for *Allgemein*, *Kinderwagen*, *Babytrage*, *Auto*).
-   - **Raumtemperatursensor (`indoor_sensor`)**: Your Home Assistant room temperature sensor (used for *Schlafen* and *Zuhause*; automatically falls back to room temperature estimation if unavailable).
-   - **Geburtsdatum (`birthdate`)**: Your baby's birthdate in `TT.MM.JJJJ` or `JJJJ-MM-TT` format (e.g., `15.08.2026`) to automatically calculate the age group (`0–3 Monate` vs. `4+ Monate`).
-3. Place the **Baby-Wetter Kleidung** tile (`1x1` up to `4x4`) on a page of your display.
-4. Tap the tile (or the **Situation** dropdown pill) on the display to open the full detail card and switch the **Situation** (`Allgemein` by default, `Kinderwagen`, `Babytrage`, `Auto`, `Schlafen`, `Zuhause`) via the dropdown menu.
+1. Add the plugin via its GitHub repository link in the Tessera app under **Plugins -> Add with a link** (or copy the folder into `/config/tessera-plugins/baby_wetter/`).
+2. Place the **Baby-Wetter Kleidung** tile (`1x1` up to `4x4` / full page) on a page of your display and configure its options right on the page:
+   - **Wetter-Entität oder Außentemperatursensor (`temp_sensor`)**: Choose your Home Assistant weather entity (e.g., `weather.forecast_home`) or an outdoor temperature sensor. When a weather entity is selected, both the outdoor temperature (`temperature` attribute) and rain condition are read automatically without needing a separate outdoor sensor!
+   - **Raumtemperatursensor (`indoor_temp_sensor`)**: Optional room temperature sensor or thermostat (`sensor.*` / `climate.*`) for *Schlafen* and *Zuhause* (automatically falls back to room temperature estimation from the outdoor temperature if left empty).
+   - **Geburtsdatum (`birthdate`)**: Your baby's birthdate in `TT.MM.JJJJ` or `JJJJ-MM-TT` format (e.g., `15.08.2026`) to automatically calculate the age in months (`0–3 Monate` vs. `4+ Monate`).
+3. Tap the tile (or the **Situation** dropdown pill) on the display to open the full detail card and switch the **Situation** (`Allgemein` by default, `Kinderwagen`, `Babytrage`, `Auto`, `Schlafen`, `Zuhause`) via the dropdown menu.
 
 ## Privacy
 

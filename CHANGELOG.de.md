@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.4 - 2026-11-04
+
+- Vereinfachte Einrichtung: Doppelte Plugin-Eingaben entfernt – Sensoren und Geburtsdatum werden jetzt ausschließlich direkt an der Kachel auf der Seite hinterlegt.
+- Direkte Unterstützung für Wetter-Entitäten (`weather.*`, z. B. `weather.forecast_home`) bei der Außentemperatur: liest das `temperature`-Attribut sowie Regen automatisch aus, sodass kein separater Außentemperatursensor nötig ist.
+- Zweizeilige Textdarstellung (`ui::text`) für alle Kleidungsstücke auf Kachel und Detailkarte, damit längere Begriffe (`dicke Strumpfhose`, `dünne Handschuhe`, `Langarmbody`, `dünner Pullover`) nicht mehr mit `...` abgeschnitten werden.
+- Kleidungs-Icons (`Handschuhe`, `Langarmbody`, `Pullover`, `Füßlinge`, `Wollwalk`) optisch überarbeitet.
+
 ## 0.1.3 - 2026-11-04
 
 - `tessera::Tone::WARN` durch `tessera::Tone::BUSY` in `GarmentIcon::draw()` ersetzt.
