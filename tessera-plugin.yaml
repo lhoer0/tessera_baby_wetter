@@ -1,0 +1,58 @@
+# Baby Wetter (baby-wetter.de): clothing recommendations for babies based on outdoor/indoor temperature, age (calculated
+# from birthdate), and situation (Allgemein, Kinderwagen, Babytrage, Auto, Schlafen, Zuhause).
+id: baby_wetter
+version: 0.1.0
+api: "0.17"
+icon: baby-carriage
+maintainer: lhoer
+license: MIT
+stage: beta
+topics: [weather, home]
+requires:
+  esphome: 2026.6.2
+boards: any
+flash_kb: 16
+
+permissions:
+  network: [baby-wetter.de]
+  read_entities: ["{temperature_sensor}", "{indoor_sensor}"]
+attributes: [cloud]
+privacy: https://baby-wetter.de/datenschutzerklaerung/
+
+inputs:
+  - { id: temperature_sensor, kind: entity, domains: [sensor], scope: screen, label: input_temp_sensor, hint: input_temp_sensor_hint }
+  - { id: indoor_sensor, kind: entity, domains: [sensor], scope: screen, label: input_indoor_sensor, hint: input_indoor_sensor_hint }
+  - { id: birthdate, kind: text, scope: all, label: input_birthdate, hint: input_birthdate_hint }
+
+settings:
+  - { key: baby_wetter_situation, label: setting_situation, hint: setting_situation_hint }
+
+tiles:
+  - id: outfit
+    name: tile_name
+    icon: baby-carriage
+    sizes: { min: 1x1, max: 4x4 }
+    memory: 2800
+    pictures: 8
+    example: tile_example
+    options:
+      - id: situation
+        kind: choice
+        default: follow
+        label: opt_situation
+        hint: opt_situation_hint
+        choices:
+          - { value: follow, label: sit_follow }
+          - { value: none, label: sit_none }
+          - { value: kiwa, label: sit_kiwa }
+          - { value: trage, label: sit_trage }
+          - { value: auto, label: sit_auto }
+          - { value: schlafen, label: sit_schlafen }
+          - { value: zuhause, label: sit_zuhause }
+      - { id: temp_sensor, kind: entity, domains: [sensor], label: opt_temp_sensor, hint: opt_temp_sensor_hint }
+      - { id: indoor_temp_sensor, kind: entity, domains: [sensor], label: opt_indoor_sensor, hint: opt_indoor_sensor_hint }
+      - { id: birthdate, kind: text, label: opt_birthdate, hint: opt_birthdate_hint }
+      - { id: rain_sensor, kind: entity, domains: [sensor, weather], attributes: [precipitation_probability], label: opt_rain_sensor, hint: opt_rain_sensor_hint }
+
+cards:
+  - { id: details, name: card_name, wide: true, pictures: 8 }

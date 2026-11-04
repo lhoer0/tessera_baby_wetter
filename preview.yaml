@@ -1,0 +1,17 @@
+# Preview configuration for tools/preview.py
+tiles:
+  outfit:
+    options:
+      situation: none
+      birthdate: "15.08.2026"
+    entities:
+      temp_sensor:
+        state: "14.5"
+        name: "Außentemperatur"
+        attributes:
+          unit_of_measurement: "°C"
+      indoor_temp_sensor:
+        state: "19.5"
+        name: "Kinderzimmer"
+        attributes:
+          unit_of_measurement: "°C"

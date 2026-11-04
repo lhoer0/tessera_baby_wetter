@@ -1,0 +1,39 @@
+# What a screen gets when it takes this plugin: the outdoor and indoor temperature sensors from Home Assistant,
+# the Situation dropdown select entity ("Allgemein" as default), and the baby_wetter component.
+defaults:
+  TEMPERATURE_SENSOR: sensor.outdoor_temperature
+  INDOOR_SENSOR: sensor.indoor_temperature
+  BIRTHDATE: "2026-06-01"
+
+sensor:
+  - platform: homeassistant
+    id: baby_wetter_outdoor_temp
+    entity_id: ${TEMPERATURE_SENSOR}
+    internal: true
+  - platform: homeassistant
+    id: baby_wetter_indoor_temp
+    entity_id: ${INDOOR_SENSOR}
+    internal: true
+
+select:
+  - platform: template
+    id: baby_wetter_situation
+    name: "Baby Wetter Situation"
+    icon: mdi:baby-carriage
+    optimistic: true
+    options:
+      - "Allgemein"
+      - "Kinderwagen"
+      - "Babytrage"
+      - "Auto"
+      - "Schlafen"
+      - "Zuhause"
+    initial_option: "Allgemein"
+    restore_value: true
+    entity_category: config
+
+baby_wetter:
+  outdoor_temp: baby_wetter_outdoor_temp
+  indoor_temp: baby_wetter_indoor_temp
+  situation: baby_wetter_situation
+  birthdate: ${BIRTHDATE}
